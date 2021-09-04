@@ -1,2 +1,1 @@
-# SqlIntuitive
-Python library for easy and intuitive database use.
+docs/index.md
