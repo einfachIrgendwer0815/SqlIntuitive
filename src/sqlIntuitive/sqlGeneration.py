@@ -22,3 +22,33 @@ def gen_insert(tablename, column_values):
     text += ');'
 
     return text
+
+def gen_delete(tablename, conditions={}, conditionCombining="AND"):
+    tablename = re.sub(' ', '', tablename)
+
+    if len(tablename) == 0:
+        raise exceptions.InvalidTableNameException("Tablename empty.")
+
+    text = f'DELETE FROM {tablename}'
+
+    if len(conditions) > 0:
+        text += ' WHERE '
+
+        conditionsText = []
+
+        for column in conditions.keys():
+            condition_text = f'{column}='
+
+            prefix = ''
+            if type(conditions[column]) == str:
+                prefix = '\''
+
+            condition_text += f'{prefix}{conditions[column]}{prefix}'
+
+            conditionsText.append(condition_text)
+
+        text += f' {conditionCombining} '.join(conditionsText)
+
+    text += ';'
+
+    return text
