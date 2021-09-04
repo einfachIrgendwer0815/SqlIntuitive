@@ -10,7 +10,7 @@ At first, contributing is highly appreciated and everyone is welcome to do this.
 
 ## Issues
 
-Please follow the respective templates for bug reports and feature requests. Do *not* use issues to ask questions.
+Please follow the respective templates for bug reports and feature requests. Do *not* use issues to ask questions. Use discussions therefore.
 
 ## Pull request
 
