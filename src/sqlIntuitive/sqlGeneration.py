@@ -52,3 +52,37 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND"):
     text += ';'
 
     return text
+
+def gen_create_db(dbName):
+    dbName = re.sub(' ', '', dbName)
+
+    if len(dbName) == 0:
+        raise exceptions.InvalidDatabaseNameException("Databasename invalid.")
+
+    text = f'CREATE DATABASE {dbName};'
+
+    return text
+
+def gen_create_table(tableName, columns):
+    tableName = re.sub(' ', '', tableName)
+
+    if len(columns) == 0:
+        raise exceptions.DictionaryEmptyException("No columns set.")
+
+    if len(tableName) == 0:
+        raise exceptions.InvalidTableNameException("Tablename empty.")
+
+    text = f'CREATE TABLE {tableName} ('
+
+    columnTexts = []
+
+    for column in columns.keys():
+        columnText = f'{column} {columns[column]}'
+
+        columnTexts.append(columnText)
+
+    text += ', '.join(columnTexts)
+
+    text += ');'
+
+    return text

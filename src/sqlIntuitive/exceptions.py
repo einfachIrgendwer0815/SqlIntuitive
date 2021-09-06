@@ -3,3 +3,6 @@ class DictionaryEmptyException(Exception):
 
 class InvalidTableNameException(Exception):
     pass
+
+class InvalidDatabaseNameException(Exception):
+    pass

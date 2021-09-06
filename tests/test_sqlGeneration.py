@@ -35,3 +35,38 @@ def test_E_gen_delete():
         sqlGeneration.gen_delete(" ")
         sqlGeneration.gen_delete(" ", {"col": "val"})
         sqlGeneration.gen_delete(" ", {"col": "val"}, "OR")
+
+def test_F_gen_create_db():
+    assert sqlGeneration.gen_create_db("TestF") == "CREATE DATABASE TestF;"
+    assert sqlGeneration.gen_create_db(" Tes tF ") == "CREATE DATABASE TestF;"
+    assert sqlGeneration.gen_create_db(" TestF") == "CREATE DATABASE TestF;"
+    assert sqlGeneration.gen_create_db("TestF ") == "CREATE DATABASE TestF;"
+    assert sqlGeneration.gen_create_db(" Tes   tF ") == "CREATE DATABASE TestF;"
+
+def test_G_gen_create_db():
+    with pytest.raises(exceptions.InvalidDatabaseNameException):
+        sqlGeneration.gen_create_db("")
+
+    with pytest.raises(exceptions.InvalidDatabaseNameException):
+        sqlGeneration.gen_create_db(" ")
+
+    with pytest.raises(exceptions.InvalidDatabaseNameException):
+        sqlGeneration.gen_create_db("   ")
+
+def test_H_gen_create_table():
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int"}) == "CREATE TABLE TestH (col1 int);"
+    assert sqlGeneration.gen_create_table("Tes t H", {"col1": "int"}) == "CREATE TABLE TestH (col1 int);"
+    assert sqlGeneration.gen_create_table(" T  es tH", {"col1": "int"}) == "CREATE TABLE TestH (col1 int);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}) == "CREATE TABLE TestH (col1 int, xyz char);"
+    assert sqlGeneration.gen_create_table("Te stH", {"col1": "int", "xyz": "char"}) == "CREATE TABLE TestH (col1 int, xyz char);"
+    assert sqlGeneration.gen_create_table("Te stH  ", {"col1": "int", "xyz": "char"}) == "CREATE TABLE TestH (col1 int, xyz char);"
+
+def test_I_gen_create_table():
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_create_table("", {"id": "int"})
+
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_create_table("  ", {"id": "int"})
+
+    with pytest.raises(exceptions.DictionaryEmptyException):
+        sqlGeneration.gen_create_table("TestI", {})
