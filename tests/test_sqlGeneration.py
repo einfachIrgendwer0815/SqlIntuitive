@@ -2,6 +2,8 @@ from sqlIntuitive import sqlGeneration, exceptions
 
 import pytest
 
+import random, string
+
 def test_A_gen_insert():
     assert sqlGeneration.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}) == "INSERT INTO TestA (colA, colB, colC) VALUES (val1, 123, True);"
     assert sqlGeneration.gen_insert(" Test B", {"colA":"val1", "colB": 123, "colC": True}) == "INSERT INTO TestB (colA, colB, colC) VALUES (val1, 123, True);"
@@ -70,3 +72,27 @@ def test_I_gen_create_table():
 
     with pytest.raises(exceptions.DictionaryEmptyException):
         sqlGeneration.gen_create_table("TestI", {})
+
+def test_J_INVALID_CHARS():
+    assert sqlGeneration.INVALID_CHARS == ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t']
+
+def test_K_check_validName():
+    chars = string.ascii_letters + string.digits
+
+    for i in range(10):
+        for char in sqlGeneration.INVALID_CHARS:
+            text = [random.choice(chars) for _ in range(random.randint(10,100))]
+
+            text[random.randint(0, len(text)-1)] = char
+
+            text = ''.join(text)
+
+            assert sqlGeneration.check_validName(text) == False
+
+def test_L_check_validName():
+    chars = string.ascii_letters + string.digits
+
+    for _ in range(50):
+        text = ''.join([random.choice(chars) for _ in range(70)])
+
+        assert sqlGeneration.check_validName(text) == True
