@@ -14,7 +14,8 @@ def check_validName(text, raises=None):
     return True
 
 def gen_insert(tablename, column_values):
-    tablename = re.sub(' ', '', tablename)
+    if check_validName(tablename) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
     if len(tablename) == 0:
         raise exceptions.InvalidTableNameException("Tablename empty.")
@@ -35,7 +36,8 @@ def gen_insert(tablename, column_values):
     return text
 
 def gen_delete(tablename, conditions={}, conditionCombining="AND"):
-    tablename = re.sub(' ', '', tablename)
+    if check_validName(tablename) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
     if len(tablename) == 0:
         raise exceptions.InvalidTableNameException("Tablename empty.")
@@ -65,7 +67,8 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND"):
     return text
 
 def gen_create_db(dbName):
-    dbName = re.sub(' ', '', dbName)
+    if check_validName(dbName) == False:
+        raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
 
     if len(dbName) == 0:
         raise exceptions.InvalidDatabaseNameException("Databasename invalid.")
@@ -75,7 +78,9 @@ def gen_create_db(dbName):
     return text
 
 def gen_create_table(tableName, columns):
-    tableName = re.sub(' ', '', tableName)
+    if check_validName(tableName) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+
 
     if len(columns) == 0:
         raise exceptions.DictionaryEmptyException("No columns set.")
