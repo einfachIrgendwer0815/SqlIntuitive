@@ -35,6 +35,53 @@ def gen_insert(tablename, column_values):
 
     return text
 
+def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
+    if check_validName(tableName) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+
+    if len(tableName) == 0:
+        raise exceptions.InvalidTableNameException("Tablename empty.")
+
+    if len(newValues) == 0:
+        raise exceptions.DictionaryEmptyException("No values to change specified.")
+
+    text = f'UPDATE {tableName} SET '
+
+    setTexts = []
+    for column in newValues.keys():
+        setText = f'{column}='
+
+        prefix = ''
+        if type(newValues[column]) == str:
+            prefix = '\''
+
+        setText += f'{prefix}{newValues[column]}{prefix}'
+
+        setTexts.append(setText)
+
+    text += ', '.join(setTexts)
+
+    if len(conditions) > 0:
+        text += ' WHERE '
+
+        conditionTexts = []
+        for column in conditions.keys():
+            conditionText = f'{column}='
+
+            prefix = ''
+            if type(conditions[column]) == str:
+                prefix = '\''
+
+            conditionText += f'{prefix}{conditions[column]}{prefix}'
+
+            conditionTexts.append(conditionText)
+
+        text += f' {conditionCombining} '.join(conditionTexts)
+
+    text += ';'
+
+    return text
+
 def gen_delete(tablename, conditions={}, conditionCombining="AND"):
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")

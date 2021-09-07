@@ -134,3 +134,33 @@ def test_L_check_validName():
         text = ''.join([random.choice(chars) for _ in range(70)])
 
         assert sqlGeneration.check_validName(text) == True
+
+def test_M_gen_update():
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}) == "UPDATE TableA SET col1='val1';"
+    assert sqlGeneration.gen_update("TableA", {"col1": True}) == "UPDATE TableA SET col1=True;"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}) == "UPDATE TableA SET col1=42;"
+
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 'hello'}) == "UPDATE TableA SET col1='val1' WHERE col5='hello';"
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': True}) == "UPDATE TableA SET col1='val1' WHERE col5=True;"
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 42}) == "UPDATE TableA SET col1='val1' WHERE col5=42;"
+
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 'hello'}) == "UPDATE TableA SET col1=True WHERE col5='hello';"
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': True}) == "UPDATE TableA SET col1=True WHERE col5=True;"
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 42}) == "UPDATE TableA SET col1=True WHERE col5=42;"
+
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 'hello'}) == "UPDATE TableA SET col1=42 WHERE col5='hello';"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': True}) == "UPDATE TableA SET col1=42 WHERE col5=True;"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42}) == "UPDATE TableA SET col1=42 WHERE col5=42;"
+
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, "OR") == "UPDATE TableA SET col1=42 WHERE col5=42 OR colB='welt';"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}) == "UPDATE TableA SET col1=42 WHERE col5=42 AND colB='welt';"
+
+def test_N_gen_update():
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_update("T abl e", {"col1": "val1"})
+
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_update("", {"col1": "val1"})
+
+    with pytest.raises(exceptions.DictionaryEmptyException):
+        sqlGeneration.gen_update("TableXY", {})
