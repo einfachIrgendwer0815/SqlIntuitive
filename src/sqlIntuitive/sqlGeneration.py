@@ -8,7 +8,6 @@ INVALID_CHARS = ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+'
 def check_validName(text, raises=None):
     for char in INVALID_CHARS:
         if re.match(f'.*{char}.*', text, re.I):
-            print(char)
             return False
 
     return True
