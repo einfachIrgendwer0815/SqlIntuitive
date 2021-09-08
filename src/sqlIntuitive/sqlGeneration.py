@@ -159,3 +159,14 @@ def gen_create_table(tableName, columns):
     text += ');'
 
     return text
+
+def gen_drop_table(tableName):
+    if check_validName(tableName) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+
+    if len(tableName) == 0:
+        raise exceptions.InvalidTableNameException("Tablename invalid.")
+
+    text = f'DROP TABLE {tableName};'
+
+    return text

@@ -166,8 +166,15 @@ def test_N_gen_update():
         sqlGeneration.gen_update("TableXY", {})
 
 def test_O_gen_drop_db():
-    assert sqlGeneration.gen_drop_db("TableA") == 'DROP DATABASE TableA;'
+    assert sqlGeneration.gen_drop_db("DbA") == 'DROP DATABASE DbA;'
 
 def test_P_gen_drop_db():
     with pytest.raises(exceptions.InvalidDatabaseNameException):
         sqlGeneration.gen_drop_db("")
+
+def test_Q_gen_drop_table():
+    assert sqlGeneration.gen_drop_table("TableA") == 'DROP TABLE TableA;'
+
+def test_R_gen_drop_table():
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_drop_table("")
