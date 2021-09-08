@@ -164,3 +164,10 @@ def test_N_gen_update():
 
     with pytest.raises(exceptions.DictionaryEmptyException):
         sqlGeneration.gen_update("TableXY", {})
+
+def test_O_gen_drop_db():
+    assert sqlGeneration.gen_drop_db("TableA") == 'DROP DATABASE TableA;'
+
+def test_P_gen_drop_db():
+    with pytest.raises(exceptions.InvalidDatabaseNameException):
+        sqlGeneration.gen_drop_db("")

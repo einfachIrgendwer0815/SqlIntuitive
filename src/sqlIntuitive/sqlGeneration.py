@@ -123,6 +123,17 @@ def gen_create_db(dbName):
 
     return text
 
+def gen_drop_db(dbName):
+    if check_validName(dbName) == False:
+        raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
+
+    if len(dbName) == 0:
+        raise exceptions.InvalidDatabaseNameException("Databasename invalid.")
+
+    text = f'DROP DATABASE {dbName};'
+
+    return text
+
 def gen_create_table(tableName, columns):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
