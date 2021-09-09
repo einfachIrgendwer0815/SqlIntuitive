@@ -48,11 +48,6 @@ def test_C_get_cursor():
         username=mysql_login["username"],
         password=mysql_login["password"],
     )
-
-    assert mydb.dbCon == None
-
-    mydb.close_connection()
-
     assert mydb.connect_to_db() == True
 
     cursor = mydb.get_cursor()
