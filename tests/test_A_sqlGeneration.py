@@ -86,8 +86,12 @@ def test_G_gen_create_db():
         sqlGeneration.gen_create_db(" Tes   tF ") == "CREATE DATABASE TestF;"
 
 def test_H_gen_create_table():
-    assert sqlGeneration.gen_create_table("TestH", {"col1": "int"}) == "CREATE TABLE TestH (col1 int);"
-    assert sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}) == "CREATE TABLE TestH (col1 int, xyz char);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int"}, safeMode=False) == "CREATE TABLE TestH (col1 int);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int"}, safeMode=True) == "CREATE TABLE IF NOT EXISTS TestH (col1 int);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int"}) == "CREATE TABLE IF NOT EXISTS TestH (col1 int);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, safeMode=False) == "CREATE TABLE TestH (col1 int, xyz char);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, safeMode=True) == "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char);"
+    assert sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}) == "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char);"
 
 def test_I_gen_create_table():
     with pytest.raises(exceptions.InvalidTableNameException):

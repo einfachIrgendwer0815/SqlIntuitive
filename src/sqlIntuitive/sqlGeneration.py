@@ -134,7 +134,7 @@ def gen_drop_db(dbName):
 
     return text
 
-def gen_create_table(tableName, columns):
+def gen_create_table(tableName, columns, safeMode=True):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -145,7 +145,11 @@ def gen_create_table(tableName, columns):
     if len(tableName) == 0:
         raise exceptions.InvalidTableNameException("Tablename empty.")
 
-    text = f'CREATE TABLE {tableName} ('
+    text = 'CREATE TABLE '
+    if safeMode:
+        text += 'IF NOT EXISTS '
+
+    text += f'{tableName} ('
 
     columnTexts = []
 
