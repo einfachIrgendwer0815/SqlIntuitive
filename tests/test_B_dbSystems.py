@@ -40,3 +40,23 @@ def test_B_close_connection():
     mydb.close_connection()
 
     mydb.close_connection() # No close happens, but no error should appear.
+
+def test_C_get_cursor():
+    mydb = dbSystems.MySqlDbSystem(
+        host=mysql_login["host"],
+        database=mysql_login["database"],
+        username=mysql_login["username"],
+        password=mysql_login["password"],
+    )
+
+    assert mydb.dbCon == None
+
+    mydb.close_connection()
+
+    assert mydb.connect_to_db() == True
+
+    cursor = mydb.get_cursor()
+
+    assert cursor != None
+
+    mydb.close_connection()

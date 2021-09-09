@@ -38,3 +38,9 @@ class MySqlDbSystem():
     def close_connection(self):
         if self.dbCon != None and self.dbCon.is_connected():
             self.dbCon.close()
+
+    def get_cursor(self):
+        if self.dbCon == None or self.dbCon.is_connected() == False:
+            return None
+
+        return self.dbCon.cursor()
