@@ -66,3 +66,14 @@ def test_D_create_table():
     assert mydb.connect_to_db() == True
 
     mydb.create_table("TestA", {"name":"varchar(50)","id": "int primary key"})
+
+def test_E_drop_table():
+    mydb = dbSystems.MySqlDbSystem(
+        host=mysql_login["host"],
+        database=mysql_login["database"],
+        username=mysql_login["username"],
+        password=mysql_login["password"],
+    )
+    assert mydb.connect_to_db() == True
+
+    mydb.drop_table("TestA")

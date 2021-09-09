@@ -55,3 +55,12 @@ class MySqlDbSystem():
         cursor.execute(sql)
 
         self.dbCon.commit()
+
+    def drop_table(self, tableName):
+        sql = sqlGeneration.gen_drop_table(tableName)
+
+        cursor = self.get_cursor()
+
+        cursor.execute(sql)
+
+        self.dbCon.commit()
