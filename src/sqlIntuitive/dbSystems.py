@@ -3,6 +3,8 @@ from mysql.connector import Error
 
 from time import sleep
 
+from sqlIntuitive import sqlGeneration
+
 class SqliteDbSystem():
     pass
 
@@ -44,3 +46,12 @@ class MySqlDbSystem():
             return None
 
         return self.dbCon.cursor()
+
+    def create_table(self, tableName, columns, safeMode=True):
+        sql = sqlGeneration.gen_create_table(tableName, columns, safeMode=safeMode)
+
+        cursor = self.get_cursor()
+
+        cursor.execute(sql)
+
+        self.dbCon.commit()
