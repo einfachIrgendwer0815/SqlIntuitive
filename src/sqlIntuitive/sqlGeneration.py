@@ -12,6 +12,37 @@ def check_validName(text, raises=None):
 
     return True
 
+def gen_select(tableName, columns=[], conditions={}, conditionCombining="AND", placeholder='?'):
+    if check_validName(tableName) == False:
+        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+
+    if len(tableName) == 0:
+        raise exceptions.InvalidTableNameException("Tablename empty.")
+
+    if len(columns) == 0:
+        columns = ('*')
+
+    text = 'SELECT '
+    text += ', '.join(columns)
+
+    text += f' FROM {tableName}'
+
+    column_values_ordered = []
+
+    if len(conditions) > 0:
+        text += ' WHERE '
+
+        conditionTexts = []
+        for column in conditions.keys():
+            conditionTexts.append(f'{column}={placeholder}')
+            column_values_ordered.append(conditions[column])
+
+        text += f' {conditionCombining} '.join(conditionTexts)
+
+    text += ';'
+
+    return text, column_values_ordered
+
 def gen_insert(tablename, column_values, placeholder="?"):
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")

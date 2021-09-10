@@ -182,3 +182,16 @@ def test_Q_gen_drop_table():
 def test_R_gen_drop_table():
     with pytest.raises(exceptions.InvalidTableNameException):
         sqlGeneration.gen_drop_table("")
+
+def test_S_gen_select():
+    assert sqlGeneration.gen_select("TableS") == ('SELECT * FROM TableS;', [])
+    assert sqlGeneration.gen_select("TableS", ["col1", "xyz"]) == ('SELECT col1, xyz FROM TableS;', [])
+    assert sqlGeneration.gen_select("TableS", ["xyz"]) == ('SELECT xyz FROM TableS;', [])
+    assert sqlGeneration.gen_select("TableS", conditions={"col5":"hello"}) == ('SELECT * FROM TableS WHERE col5=?;', ['hello'])
+    assert sqlGeneration.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}) == ('SELECT abc, def FROM TableS WHERE col5=?;', ['hello'])
+    assert sqlGeneration.gen_select("TableS", conditions={"col5":"hello", "xyz": "abc"}) == ('SELECT * FROM TableS WHERE col5=? AND xyz=?;', ['hello', 'abc'])
+    assert sqlGeneration.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}) == ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=?;', ['hello', 'abc'])
+
+def test_T_gen_select():
+    with pytest.raises(exceptions.InvalidTableNameException):
+        sqlGeneration.gen_select("")
