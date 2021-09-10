@@ -82,3 +82,10 @@ class MySqlDbSystem():
         self.cursor.execute(sql, column_values_ordered)
 
         self.dbCon.commit()
+
+    def select_from(self, tableName, columns=[], conditions=[], conditionCombining="AND"):
+        sql, column_values_ordered = sqlGeneration.gen_select(tableName, columns, conditions, conditionCombining, placeholder='%s')
+
+        self.cursor.execute(sql, column_values_ordered)
+
+        return self.cursor.fetchall()

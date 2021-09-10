@@ -111,7 +111,20 @@ def test_G_update():
 
     mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
 
-def test_H_delete():
+def test_H_select_from():
+    mydb = dbSystems.MySqlDbSystem(
+        host=mysql_login["host"],
+        database=mysql_login["database"],
+        username=mysql_login["username"],
+        password=mysql_login["password"],
+    )
+    assert mydb.connect_to_db() == True
+    mydb.create_cursor()
+    assert mydb.cursor != None
+
+    mydb.select_from("TableB")
+
+def test_I_delete():
     mydb = dbSystems.MySqlDbSystem(
         host=mysql_login["host"],
         database=mysql_login["database"],
