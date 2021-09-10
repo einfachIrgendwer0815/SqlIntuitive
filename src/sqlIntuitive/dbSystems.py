@@ -68,3 +68,10 @@ class MySqlDbSystem():
         self.cursor.execute(sql, column_values_ordered)
 
         self.dbCon.commit()
+
+    def update(self, tableName, newColumnValues, conditions={}, conditionCombining="AND"):
+        sql, column_values_ordered = sqlGeneration.gen_update(tableName, newColumnValues, conditions, conditionCombining, placeholder='%s')
+
+        self.cursor.execute(sql, column_values_ordered)
+
+        self.dbCon.commit()
