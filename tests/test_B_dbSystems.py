@@ -50,9 +50,11 @@ def test_C_get_cursor():
     )
     assert mydb.connect_to_db() == True
 
-    cursor = mydb.get_cursor()
+    assert mydb.cursor == None
 
-    assert cursor != None
+    mydb.create_cursor()
+
+    assert mydb.cursor != None
 
     mydb.close_connection()
 
@@ -64,6 +66,8 @@ def test_D_create_table():
         password=mysql_login["password"],
     )
     assert mydb.connect_to_db() == True
+    mydb.create_cursor()
+    assert mydb.cursor != None
 
     mydb.create_table("TestA", {"name":"varchar(50)","id": "int primary key"})
 
@@ -75,5 +79,7 @@ def test_E_drop_table():
         password=mysql_login["password"],
     )
     assert mydb.connect_to_db() == True
+    mydb.create_cursor()
+    assert mydb.cursor != None
 
     mydb.drop_table("TestA")

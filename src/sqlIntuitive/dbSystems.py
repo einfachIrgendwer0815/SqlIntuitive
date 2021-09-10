@@ -16,6 +16,7 @@ class MySqlDbSystem():
         self.password = password
 
         self.dbCon = None
+        self.cursor = None
         self.max_connect_retries = max_connect_retries
 
     def connect_to_db(self, retryNo=0, timeout=3):
@@ -41,26 +42,22 @@ class MySqlDbSystem():
         if self.dbCon != None and self.dbCon.is_connected():
             self.dbCon.close()
 
-    def get_cursor(self):
-        if self.dbCon == None or self.dbCon.is_connected() == False:
-            return None
+    def create_cursor(self):
+        if self.cursor != None or self.dbCon == None or self.dbCon.is_connected() == False:
+            return
 
-        return self.dbCon.cursor()
+        self.cursor = self.dbCon.cursor()
 
     def create_table(self, tableName, columns, safeMode=True):
         sql = sqlGeneration.gen_create_table(tableName, columns, safeMode=safeMode)
 
-        cursor = self.get_cursor()
-
-        cursor.execute(sql)
+        self.cursor.execute(sql)
 
         self.dbCon.commit()
 
     def drop_table(self, tableName):
         sql = sqlGeneration.gen_drop_table(tableName)
 
-        cursor = self.get_cursor()
-
-        cursor.execute(sql)
+        self.cursor.execute(sql)
 
         self.dbCon.commit()
