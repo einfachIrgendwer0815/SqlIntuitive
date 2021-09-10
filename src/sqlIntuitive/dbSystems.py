@@ -61,3 +61,10 @@ class MySqlDbSystem():
         self.cursor.execute(sql)
 
         self.dbCon.commit()
+
+    def insert_into(self, tableName, column_values):
+        sql, column_values_ordered = sqlGeneration.gen_insert(tableName, column_values, placeholder="%s")
+
+        self.cursor.execute(sql, column_values_ordered)
+
+        self.dbCon.commit()
