@@ -12,7 +12,7 @@ def check_validName(text, raises=None):
 
     return True
 
-def gen_insert(tablename, column_values):
+def gen_insert(tablename, column_values, placeholder="?"):
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -32,7 +32,7 @@ def gen_insert(tablename, column_values):
 
     value_texts = []
     for column in column_values.keys():
-        value_texts += '?'
+        value_texts.append(f'{placeholder}')
         column_values_ordered.append(column_values[column])
 
     text += ', '.join(value_texts)
@@ -41,7 +41,7 @@ def gen_insert(tablename, column_values):
 
     return text, column_values_ordered
 
-def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
+def gen_update(tableName, newValues, conditions={}, conditionCombining="AND", placeholder="?"):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -57,7 +57,7 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
 
     setTexts = []
     for column in newValues.keys():
-        setText = f'{column}=?'
+        setText = f'{column}={placeholder}'
         setTexts.append(setText)
 
         column_values_ordered.append(newValues[column])
@@ -69,7 +69,7 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
 
         conditionTexts = []
         for column in conditions.keys():
-            conditionText = f'{column}=?'
+            conditionText = f'{column}={placeholder}'
             conditionTexts.append(conditionText)
 
             column_values_ordered.append(conditions[column])
@@ -80,7 +80,7 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
 
     return text, column_values_ordered
 
-def gen_delete(tablename, conditions={}, conditionCombining="AND"):
+def gen_delete(tablename, conditions={}, conditionCombining="AND", placeholder="?"):
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -96,7 +96,7 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND"):
         conditionsText = []
 
         for column in conditions.keys():
-            condition_text = f'{column}=?'
+            condition_text = f'{column}={placeholder}'
             conditionsText.append(condition_text)
 
             column_values_ordered.append(conditions[column])
