@@ -22,17 +22,24 @@ def gen_insert(tablename, column_values):
     if len(column_values) == 0:
         raise exceptions.DictionaryEmptyException("No columns set.")
 
+    column_values_ordered = []
+
     text = f'INSERT INTO {tablename} ('
 
     text += ', '.join([f'{column}' for column in column_values.keys()])
 
     text += ') VALUES ('
 
-    text += ', '.join([f'{column_values[column]}' for column in column_values.keys()])
+    value_texts = []
+    for column in column_values.keys():
+        value_texts += '?'
+        column_values_ordered.append(column_values[column])
+
+    text += ', '.join(value_texts)
 
     text += ');'
 
-    return text
+    return text, column_values_ordered
 
 def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
     if check_validName(tableName) == False:
@@ -44,19 +51,16 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
     if len(newValues) == 0:
         raise exceptions.DictionaryEmptyException("No values to change specified.")
 
+    column_values_ordered = []
+
     text = f'UPDATE {tableName} SET '
 
     setTexts = []
     for column in newValues.keys():
-        setText = f'{column}='
-
-        prefix = ''
-        if type(newValues[column]) == str:
-            prefix = '\''
-
-        setText += f'{prefix}{newValues[column]}{prefix}'
-
+        setText = f'{column}=?'
         setTexts.append(setText)
+
+        column_values_ordered.append(newValues[column])
 
     text += ', '.join(setTexts)
 
@@ -65,21 +69,16 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND"):
 
         conditionTexts = []
         for column in conditions.keys():
-            conditionText = f'{column}='
-
-            prefix = ''
-            if type(conditions[column]) == str:
-                prefix = '\''
-
-            conditionText += f'{prefix}{conditions[column]}{prefix}'
-
+            conditionText = f'{column}=?'
             conditionTexts.append(conditionText)
+
+            column_values_ordered.append(conditions[column])
 
         text += f' {conditionCombining} '.join(conditionTexts)
 
     text += ';'
 
-    return text
+    return text, column_values_ordered
 
 def gen_delete(tablename, conditions={}, conditionCombining="AND"):
     if check_validName(tablename) == False:
@@ -88,6 +87,7 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND"):
     if len(tablename) == 0:
         raise exceptions.InvalidTableNameException("Tablename empty.")
 
+    column_values_ordered = []
     text = f'DELETE FROM {tablename}'
 
     if len(conditions) > 0:
@@ -96,21 +96,16 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND"):
         conditionsText = []
 
         for column in conditions.keys():
-            condition_text = f'{column}='
-
-            prefix = ''
-            if type(conditions[column]) == str:
-                prefix = '\''
-
-            condition_text += f'{prefix}{conditions[column]}{prefix}'
-
+            condition_text = f'{column}=?'
             conditionsText.append(condition_text)
+
+            column_values_ordered.append(conditions[column])
 
         text += f' {conditionCombining} '.join(conditionsText)
 
     text += ';'
 
-    return text
+    return text, column_values_ordered
 
 def gen_create_db(dbName):
     if check_validName(dbName) == False:

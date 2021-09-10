@@ -5,7 +5,7 @@ import pytest
 import random, string
 
 def test_A_gen_insert():
-    assert sqlGeneration.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}) == "INSERT INTO TestA (colA, colB, colC) VALUES (val1, 123, True);"
+    assert sqlGeneration.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}) == ("INSERT INTO TestA (colA, colB, colC) VALUES (?, ?, ?);", ['val1', 123, True])
 
 def test_B_gen_insert():
     with pytest.raises(exceptions.DictionaryEmptyException):
@@ -22,9 +22,9 @@ def test_C_gen_insert():
         sqlGeneration.gen_insert(" ", {"colA": "val1"})
 
 def test_D_gen_delete():
-    assert sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}) == "DELETE FROM TestD WHERE colXY='ABC' AND id=12345;"
-    assert sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}, 'OR') == "DELETE FROM TestD WHERE colXY='ABC' OR id=12345;"
-    assert sqlGeneration.gen_delete("TestD") == "DELETE FROM TestD;"
+    assert sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}) == ("DELETE FROM TestD WHERE colXY=? AND id=?;", ['ABC', 12345])
+    assert sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}, 'OR') == ("DELETE FROM TestD WHERE colXY=? OR id=?;", ['ABC', 12345])
+    assert sqlGeneration.gen_delete("TestD") == ("DELETE FROM TestD;", [])
 
 def test_E_gen_delete():
     with pytest.raises(exceptions.InvalidTableNameException):
@@ -140,24 +140,24 @@ def test_L_check_validName():
         assert sqlGeneration.check_validName(text) == True
 
 def test_M_gen_update():
-    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}) == "UPDATE TableA SET col1='val1';"
-    assert sqlGeneration.gen_update("TableA", {"col1": True}) == "UPDATE TableA SET col1=True;"
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}) == "UPDATE TableA SET col1=42;"
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}) == ("UPDATE TableA SET col1=?;", ['val1'])
+    assert sqlGeneration.gen_update("TableA", {"col1": True}) == ("UPDATE TableA SET col1=?;", [True])
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}) == ("UPDATE TableA SET col1=?;", [42])
 
-    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 'hello'}) == "UPDATE TableA SET col1='val1' WHERE col5='hello';"
-    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': True}) == "UPDATE TableA SET col1='val1' WHERE col5=True;"
-    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 42}) == "UPDATE TableA SET col1='val1' WHERE col5=42;"
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 'hello'}) == ("UPDATE TableA SET col1=? WHERE col5=?;", ['val1', 'hello'])
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': True}) == ("UPDATE TableA SET col1=? WHERE col5=?;", ['val1', True])
+    assert sqlGeneration.gen_update("TableA", {"col1": "val1"}, {'col5': 42}) == ("UPDATE TableA SET col1=? WHERE col5=?;", ['val1', 42])
 
-    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 'hello'}) == "UPDATE TableA SET col1=True WHERE col5='hello';"
-    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': True}) == "UPDATE TableA SET col1=True WHERE col5=True;"
-    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 42}) == "UPDATE TableA SET col1=True WHERE col5=42;"
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 'hello'}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [True, 'hello'])
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': True}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [True, True])
+    assert sqlGeneration.gen_update("TableA", {"col1": True}, {'col5': 42}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [True, 42])
 
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 'hello'}) == "UPDATE TableA SET col1=42 WHERE col5='hello';"
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': True}) == "UPDATE TableA SET col1=42 WHERE col5=True;"
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42}) == "UPDATE TableA SET col1=42 WHERE col5=42;"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 'hello'}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [42, 'hello'])
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': True}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [42, True])
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42}) == ("UPDATE TableA SET col1=? WHERE col5=?;", [42, 42])
 
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, "OR") == "UPDATE TableA SET col1=42 WHERE col5=42 OR colB='welt';"
-    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}) == "UPDATE TableA SET col1=42 WHERE col5=42 AND colB='welt';"
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, "OR") == ("UPDATE TableA SET col1=? WHERE col5=? OR colB=?;", [42, 42, 'welt'])
+    assert sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}) == ("UPDATE TableA SET col1=? WHERE col5=? AND colB=?;", [42, 42, 'welt'])
 
 def test_N_gen_update():
     with pytest.raises(exceptions.InvalidTableNameException):
