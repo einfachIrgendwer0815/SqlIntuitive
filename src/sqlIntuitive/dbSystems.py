@@ -75,3 +75,10 @@ class MySqlDbSystem():
         self.cursor.execute(sql, column_values_ordered)
 
         self.dbCon.commit()
+
+    def delete_from(self, tableName, conditions={}, conditionCombining="AND"):
+        sql, column_values_ordered = sqlGeneration.gen_delete(tableName, conditions, conditionCombining, placeholder='%s')
+
+        self.cursor.execute(sql, column_values_ordered)
+
+        self.dbCon.commit()

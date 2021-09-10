@@ -96,6 +96,7 @@ def test_F_insert_into():
     assert mydb.cursor != None
 
     mydb.insert_into("TableB", {"col1": 'Test', "col2": 42, "col3": True})
+    mydb.insert_into("TableB", {"col1": 'Test', "col2": 84, "col3": True})
 
 def test_G_update():
     mydb = dbSystems.MySqlDbSystem(
@@ -109,3 +110,17 @@ def test_G_update():
     assert mydb.cursor != None
 
     mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
+
+def test_H_delete():
+    mydb = dbSystems.MySqlDbSystem(
+        host=mysql_login["host"],
+        database=mysql_login["database"],
+        username=mysql_login["username"],
+        password=mysql_login["password"],
+    )
+    assert mydb.connect_to_db() == True
+    mydb.create_cursor()
+    assert mydb.cursor != None
+
+    mydb.delete_from("TableB", {"col2": 84})
+    mydb.delete_from("TableB")
