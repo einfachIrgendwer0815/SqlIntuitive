@@ -6,3 +6,9 @@ class InvalidTableNameException(Exception):
 
 class InvalidDatabaseNameException(Exception):
     pass
+
+class InvalidPrimaryKeyColumn(Exception):
+    pass
+
+class InvalidForeignKeyColumn(Exception):
+    pass

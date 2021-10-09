@@ -48,8 +48,8 @@ class MySqlDbSystem():
 
         self.cursor = self.dbCon.cursor()
 
-    def create_table(self, tableName, columns, safeMode=True):
-        sql = sqlGeneration.gen_create_table(tableName, columns, safeMode=safeMode)
+    def create_table(self, tableName, columns, primaryKeys=[], foreignKeys={}, safeMode=True):
+        sql = sqlGeneration.gen_create_table(tableName, columns, primaryKeys=primaryKeys, foreignKeys=foreignKeys, safeMode=safeMode)
 
         self.cursor.execute(sql)
 

@@ -160,16 +160,23 @@ def gen_drop_db(dbName):
 
     return text
 
-def gen_create_table(tableName, columns, safeMode=True):
+def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, safeMode=True):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
-
 
     if len(columns) == 0:
         raise exceptions.DictionaryEmptyException("No columns set.")
 
     if len(tableName) == 0:
         raise exceptions.InvalidTableNameException("Tablename empty.")
+
+    for primary in primaryKeys:
+        if primary not in columns.keys():
+            raise exceptions.InvalidPrimaryKeyColumn(f'{primary} not in columns.')
+
+    for foreign in foreignKeys.keys():
+        if foreign not in columns.keys():
+            raise exceptions.InvalidForeignKeyColumn(f'{foreign} not in columns')
 
     text = 'CREATE TABLE '
     if safeMode:
@@ -183,6 +190,16 @@ def gen_create_table(tableName, columns, safeMode=True):
         columnText = f'{column} {columns[column]}'
 
         columnTexts.append(columnText)
+
+    for primary in primaryKeys:
+        primaryText = f'PRIMARY KEY ({primary})'
+
+        columnTexts.append(primaryText)
+
+    for foreign in foreignKeys.keys():
+        foreignText = f'FOREIGN KEY ({foreign}) REFERENCES {foreignKeys[foreign]}'
+
+        columnTexts.append(foreignText)
 
     text += ', '.join(columnTexts)
 
