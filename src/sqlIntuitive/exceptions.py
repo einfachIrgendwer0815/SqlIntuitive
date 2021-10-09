@@ -1,14 +1,23 @@
-class DictionaryEmptyException(Exception):
+class SqlIntuitiveException(Exception):
     pass
 
-class InvalidTableNameException(Exception):
+class ParameterException(SqlIntuitiveException):
     pass
 
-class InvalidDatabaseNameException(Exception):
+class DictionaryEmptyException(ParameterException):
     pass
 
-class InvalidPrimaryKeyColumn(Exception):
+class InvalidTableNameException(ParameterException):
     pass
 
-class InvalidForeignKeyColumn(Exception):
+class InvalidDatabaseNameException(ParameterException):
+    pass
+
+class InvalidConstrait(ParameterException):
+    pass
+
+class InvalidPrimaryKeyColumn(InvalidConstrait):
+    pass
+
+class InvalidForeignKeyColumn(InvalidConstrait):
     pass
