@@ -1,6 +1,5 @@
 from sqlIntuitive import dbSystems
 
-import pytest
 import unittest
 
 import json, os

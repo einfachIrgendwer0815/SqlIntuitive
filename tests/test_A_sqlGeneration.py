@@ -1,6 +1,5 @@
 from sqlIntuitive import sqlGeneration, exceptions
 
-import pytest
 import unittest
 
 import random, string
@@ -19,17 +18,17 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}), ("INSERT INTO TestA (colA, colB, colC) VALUES (?, ?, ?);", ['val1', 123, True]))
 
     def test_B_gen_insert(self):
-        with pytest.raises(exceptions.DictionaryEmptyException):
+        with self.assertRaises(exceptions.DictionaryEmptyException):
             sqlGeneration.gen_insert("TestB", {})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_insert(" Test B", {"colA":"val1", "colB": 123, "colC": True})
 
     def test_C_gen_insert(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_insert("", {"colA": "val1"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_insert(" ", {"colA": "val1"})
 
     def test_D_gen_delete(self):
@@ -38,62 +37,62 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_delete("TestD"), ("DELETE FROM TestD;", []))
 
     def test_E_gen_delete(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("", {"col": "val"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("", {"col": "val"}, "OR")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete(" ")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete(" ", {"col": "val"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete(" ", {"col": "val"}, "OR")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("TestD ")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("T es tD", {"colXY": "ABC", "id": 12345})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("T es tD", {"colXY": "ABC", "id": 12345}, 'OR')
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("T es tD")
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_delete("T es tD ")
 
     def test_F_gen_create_db(self):
         self.assertTrue(sqlGeneration.gen_create_db("TestF"))
 
     def test_G_gen_create_db(self):
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db("")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db(" ")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db("   ")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db(" Tes tF ")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db(" TestF")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db("TestF ")
 
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_create_db(" Tes   tF ")
 
     def test_H_gen_create_table(self):
@@ -115,34 +114,34 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char", "abc": "int"}, primaryKeys=['xyz'], foreignKeys={'col1': 'Test(Hello)'}, uniqueColumns=['abc']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, abc int, PRIMARY KEY (xyz), FOREIGN KEY (col1) REFERENCES Test(Hello), UNIQUE (abc));")
 
     def test_I_gen_create_table(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("", {"id": "int"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("  ", {"id": "int"})
 
-        with pytest.raises(exceptions.DictionaryEmptyException):
+        with self.assertRaises(exceptions.DictionaryEmptyException):
             sqlGeneration.gen_create_table("TestI", {})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("Tes t H", {"col1": "int"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table(" T  es tH", {"col1": "int"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("Te stH", {"col1": "int", "xyz": "char"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("Te stH  ", {"col1": "int", "xyz": "char"})
 
-        with pytest.raises(exceptions.InvalidPrimaryKeyColumn):
+        with self.assertRaises(exceptions.InvalidPrimaryKeyColumn):
             sqlGeneration.gen_create_table("Test", {'col1': 'int'}, primaryKeys=['col2'])
 
-        with pytest.raises(exceptions.InvalidForeignKeyColumn):
+        with self.assertRaises(exceptions.InvalidForeignKeyColumn):
             sqlGeneration.gen_create_table("Test", {'col1': 'int'}, foreignKeys={'col2': 'Test(xyz)'})
 
-        with pytest.raises(exceptions.InvalidUniqueColumn):
+        with self.assertRaises(exceptions.InvalidUniqueColumn):
             sqlGeneration.gen_create_table("Test", {'col1': 'int'}, uniqueColumns=['col2'])
 
     def test_J_INVALID_CHARS(self):
@@ -190,27 +189,27 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}), ("UPDATE TableA SET col1=? WHERE col5=? AND colB=?;", [42, 42, 'welt']))
 
     def test_N_gen_update(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_update("T abl e", {"col1": "val1"})
 
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_update("", {"col1": "val1"})
 
-        with pytest.raises(exceptions.DictionaryEmptyException):
+        with self.assertRaises(exceptions.DictionaryEmptyException):
             sqlGeneration.gen_update("TableXY", {})
 
     def test_O_gen_drop_db(self):
         self.assertEqual(sqlGeneration.gen_drop_db("DbA"), 'DROP DATABASE DbA;')
 
     def test_P_gen_drop_db(self):
-        with pytest.raises(exceptions.InvalidDatabaseNameException):
+        with self.assertRaises(exceptions.InvalidDatabaseNameException):
             sqlGeneration.gen_drop_db("")
 
     def test_Q_gen_drop_table(self):
         self.assertEqual(sqlGeneration.gen_drop_table("TableA"), 'DROP TABLE TableA;')
 
     def test_R_gen_drop_table(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_drop_table("")
 
     def test_S_gen_select(self):
@@ -223,5 +222,5 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=?;', ['hello', 'abc']))
 
     def test_T_gen_select(self):
-        with pytest.raises(exceptions.InvalidTableNameException):
+        with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_select("")
