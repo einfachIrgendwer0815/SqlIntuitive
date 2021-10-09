@@ -10,7 +10,7 @@ setup(
     python_requires='>=3.8',
     package_dir={"":"src"},
     packages=find_packages(where="src"),
-    version='0.4.0',
+    version='0.4.1',
     description='Library for easy and intuitive use of database systems.',
     author="Moritz Bauer",
     license="MIT",

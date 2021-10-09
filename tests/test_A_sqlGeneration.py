@@ -104,7 +104,7 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char);")
 
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, primaryKeys=['col1']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, PRIMARY KEY (col1));")
-        self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, primaryKeys=['col1', 'xyz']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, PRIMARY KEY (col1), PRIMARY KEY (xyz));")
+        self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, primaryKeys=['col1', 'xyz']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, PRIMARY KEY (col1,xyz));")
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, foreignKeys={'col1': 'Test(Hello)'}), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, FOREIGN KEY (col1) REFERENCES Test(Hello));")
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, foreignKeys={'col1': 'Test(Hello)', 'xyz': 'Test(World)'}), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, FOREIGN KEY (col1) REFERENCES Test(Hello), FOREIGN KEY (xyz) REFERENCES Test(World));")
 

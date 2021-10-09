@@ -195,8 +195,15 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, uniqueC
 
         columnTexts.append(columnText)
 
-    for primary in primaryKeys:
-        primaryText = f'PRIMARY KEY ({primary})'
+    if len(primaryKeys) > 0:
+        primaryText = 'PRIMARY KEY ('
+        primarySubTexts = []
+
+        for primary in primaryKeys:
+            primarySubTexts.append(str(primary))
+
+        primaryText += ','.join(primarySubTexts)
+        primaryText += ')'
 
         columnTexts.append(primaryText)
 
