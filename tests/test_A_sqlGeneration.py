@@ -111,6 +111,9 @@ class TestSqlGeneration(unittest.TestCase):
 
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, primaryKeys=['xyz'], foreignKeys={'col1': 'Test(Hello)'}), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, PRIMARY KEY (xyz), FOREIGN KEY (col1) REFERENCES Test(Hello));")
 
+        self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, uniqueColumns=['col1']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, UNIQUE (col1));")
+        self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char", "abc": "int"}, primaryKeys=['xyz'], foreignKeys={'col1': 'Test(Hello)'}, uniqueColumns=['abc']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, abc int, PRIMARY KEY (xyz), FOREIGN KEY (col1) REFERENCES Test(Hello), UNIQUE (abc));")
+
     def test_I_gen_create_table(self):
         with pytest.raises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("", {"id": "int"})
@@ -138,6 +141,9 @@ class TestSqlGeneration(unittest.TestCase):
 
         with pytest.raises(exceptions.InvalidForeignKeyColumn):
             sqlGeneration.gen_create_table("Test", {'col1': 'int'}, foreignKeys={'col2': 'Test(xyz)'})
+
+        with pytest.raises(exceptions.InvalidUniqueColumn):
+            sqlGeneration.gen_create_table("Test", {'col1': 'int'}, uniqueColumns=['col2'])
 
     def test_J_INVALID_CHARS(self):
         self.assertEqual(sqlGeneration.INVALID_CHARS, ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t'])

@@ -160,7 +160,7 @@ def gen_drop_db(dbName):
 
     return text
 
-def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, safeMode=True):
+def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, uniqueColumns=[], safeMode=True):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -177,6 +177,10 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, safeMod
     for foreign in foreignKeys.keys():
         if foreign not in columns.keys():
             raise exceptions.InvalidForeignKeyColumn(f'{foreign} not in columns')
+
+    for unique in uniqueColumns:
+        if unique not in columns.keys():
+            raise exceptions.InvalidUniqueColumn(f'{unique} not in columns')
 
     text = 'CREATE TABLE '
     if safeMode:
@@ -200,6 +204,11 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, safeMod
         foreignText = f'FOREIGN KEY ({foreign}) REFERENCES {foreignKeys[foreign]}'
 
         columnTexts.append(foreignText)
+
+    for unique in uniqueColumns:
+        uniqueText = f'UNIQUE ({unique})'
+
+        columnTexts.append(uniqueText)
 
     text += ', '.join(columnTexts)
 

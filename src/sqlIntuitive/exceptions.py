@@ -21,3 +21,6 @@ class InvalidPrimaryKeyColumn(InvalidConstrait):
 
 class InvalidForeignKeyColumn(InvalidConstrait):
     pass
+
+class InvalidUniqueColumn(InvalidConstrait):
+    pass
