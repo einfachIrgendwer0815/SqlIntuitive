@@ -1,139 +1,106 @@
 from sqlIntuitive import dbSystems
 
 import pytest
+import unittest
 
-import json
+import json, os
 
-with open('tests/mysql_testserver_login.json', 'r') as file:
-    mysql_login = json.load(file)
+defaultFile = 'tests/testsToRun.json'
+altFile = 'tests/testsToRunDefault.json'
 
-def test_A_connect_to_db__close_connection():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
+with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as file:
+    runTestDBSystems = json.load(file)['dbSystems']
 
-    assert mydb.connect_to_db() == True
-    assert mydb.dbCon != None
-    assert mydb.dbCon.is_connected()
+@unittest.skipIf(runTestDBSystems == False, 'Skipped TestDBSystems via config')
+class TestDBSystems(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        with open('tests/mysql_testserver_login.json', 'r') as file:
+            cls.mysql_login = json.load(file)
 
-    mydb.close_connection()
+    def setUp(self):
+        self.mydb = dbSystems.MySqlDbSystem(
+            host=self.mysql_login["host"],
+            database=self.mysql_login["database"],
+            username=self.mysql_login["username"],
+            password=self.mysql_login["password"],
+        )
 
-    assert mydb.dbCon.is_connected() == False
+    def tearDowm(self):
+        if self.mydb.dbCon != None and self.mydb.dbCon.is_connected():
+            self.mydb.dbCon.close()
 
-def test_B_close_connection():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
+    def test_A_connect_to_db(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.assertIsNotNone(self.mydb.dbCon)
+        self.assertTrue(self.mydb.dbCon.is_connected())
 
-    assert mydb.dbCon == None
+        self.mydb.close_connection()
 
-    mydb.close_connection()
+        self.assertFalse(self.mydb.dbCon.is_connected())
 
-    assert mydb.connect_to_db() == True
+    def test_B_close_connection(self):
+        self.assertIsNone(self.mydb.dbCon)
 
-    mydb.close_connection()
+        self.mydb.close_connection()
 
-    mydb.close_connection() # No close happens, but no error should appear.
+        self.assertTrue(self.mydb.connect_to_db())
 
-def test_C_get_cursor():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
+        self.mydb.close_connection()
 
-    assert mydb.cursor == None
+        self.mydb.close_connection() # No close happens, but no error should appear.
 
-    mydb.create_cursor()
+    def test_C_get_cursor(self):
+        self.assertTrue(self.mydb.connect_to_db())
 
-    assert mydb.cursor != None
+        self.assertIsNone(self.mydb.cursor)
 
-    mydb.close_connection()
+        self.mydb.create_cursor()
 
-def test_D_create_table():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.create_table("TestA", {"name":"varchar(50)","id": "int primary key"})
+        self.mydb.close_connection()
 
-def test_E_drop_table():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+    def test_D_create_table(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.drop_table("TestA")
+        self.mydb.create_table("TestA", {"name":"varchar(50)","id": "int primary key"})
 
-def test_F_insert_into():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+    def test_E_drop_table(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.insert_into("TableB", {"col1": 'Test', "col2": 42, "col3": True})
-    mydb.insert_into("TableB", {"col1": 'Test', "col2": 84, "col3": True})
+        self.mydb.drop_table("TestA")
 
-def test_G_update():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+    def test_F_insert_into(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
+        self.mydb.insert_into("TableB", {"col1": 'Test', "col2": 42, "col3": True})
+        self.mydb.insert_into("TableB", {"col1": 'Test', "col2": 84, "col3": True})
 
-def test_H_select_from():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+    def test_G_update(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.select_from("TableB")
+        self.mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
 
-def test_I_delete():
-    mydb = dbSystems.MySqlDbSystem(
-        host=mysql_login["host"],
-        database=mysql_login["database"],
-        username=mysql_login["username"],
-        password=mysql_login["password"],
-    )
-    assert mydb.connect_to_db() == True
-    mydb.create_cursor()
-    assert mydb.cursor != None
+    def test_H_select_from(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
 
-    mydb.delete_from("TableB", {"col2": 84})
-    mydb.delete_from("TableB")
+        self.mydb.select_from("TableB")
+
+    def test_I_delete(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
+
+        self.mydb.delete_from("TableB", {"col2": 84})
+        self.mydb.delete_from("TableB")
