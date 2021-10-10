@@ -13,14 +13,14 @@ class InvalidTableNameException(ParameterException):
 class InvalidDatabaseNameException(ParameterException):
     pass
 
-class InvalidConstrait(ParameterException):
+class InvalidConstraint(ParameterException):
     pass
 
-class InvalidPrimaryKeyColumn(InvalidConstrait):
+class InvalidPrimaryKeyColumn(InvalidConstraint):
     pass
 
-class InvalidForeignKeyColumn(InvalidConstrait):
+class InvalidForeignKeyColumn(InvalidConstraint):
     pass
 
-class InvalidUniqueColumn(InvalidConstrait):
+class InvalidUniqueColumn(InvalidConstraint):
     pass
