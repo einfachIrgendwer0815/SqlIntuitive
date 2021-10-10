@@ -160,7 +160,7 @@ def gen_drop_db(dbName):
 
     return text
 
-def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, uniqueColumns=[], safeMode=True):
+def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, namedForeignKeys={}, uniqueColumns=[], safeMode=True):
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -181,6 +181,13 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, uniqueC
     for unique in uniqueColumns:
         if unique not in columns.keys():
             raise exceptions.InvalidUniqueColumn(f'{unique} not in columns')
+
+    for named in namedForeignKeys.keys():
+        if named not in columns.keys():
+            raise exceptions.InvalidForeignKeyColumn(f'{named} not in columns')
+
+        if type(namedForeignKeys[named]) != dict or 'name' not in namedForeignKeys[named].keys() or 'reference' not in namedForeignKeys[named].keys():
+            raise exceptions.InvalidNamedForeignKeyDictionary(f'Values for column {named} are not defined')
 
     text = 'CREATE TABLE '
     if safeMode:
@@ -209,6 +216,11 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, uniqueC
 
     for foreign in foreignKeys.keys():
         foreignText = f'FOREIGN KEY ({foreign}) REFERENCES {foreignKeys[foreign]}'
+
+        columnTexts.append(foreignText)
+
+    for foreign in namedForeignKeys.keys():
+        foreignText = f'CONSTRAINT {namedForeignKeys[foreign]["name"]} FOREIGN KEY ({foreign}) REFERENCES {namedForeignKeys[foreign]["reference"]}'
 
         columnTexts.append(foreignText)
 

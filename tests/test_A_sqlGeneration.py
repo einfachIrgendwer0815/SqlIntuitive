@@ -113,6 +113,8 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char"}, uniqueColumns=['col1']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, UNIQUE (col1));")
         self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "int", "xyz": "char", "abc": "int"}, primaryKeys=['xyz'], foreignKeys={'col1': 'Test(Hello)'}, uniqueColumns=['abc']), "CREATE TABLE IF NOT EXISTS TestH (col1 int, xyz char, abc int, PRIMARY KEY (xyz), FOREIGN KEY (col1) REFERENCES Test(Hello), UNIQUE (abc));")
 
+        self.assertEqual(sqlGeneration.gen_create_table("TestH", {"col1": "varchar(10)"}, namedForeignKeys={"col1": {"name": "TestFK", "reference": "TableXY(abc)"}}), "CREATE TABLE IF NOT EXISTS TestH (col1 varchar(10), CONSTRAINT TestFK FOREIGN KEY (col1) REFERENCES TableXY(abc));")
+
     def test_I_gen_create_table(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_create_table("", {"id": "int"})
@@ -143,6 +145,21 @@ class TestSqlGeneration(unittest.TestCase):
 
         with self.assertRaises(exceptions.InvalidUniqueColumn):
             sqlGeneration.gen_create_table("Test", {'col1': 'int'}, uniqueColumns=['col2'])
+
+        with self.assertRaises(exceptions.InvalidForeignKeyColumn):
+            sqlGeneration.gen_create_table("Test", {'col1': 'int'}, namedForeignKeys={'col2': {'name':"testFK", "reference": "TableABC(def)"}})
+
+        with self.assertRaises(exceptions.InvalidNamedForeignKeyDictionary):
+            sqlGeneration.gen_create_table("Test", {"col1": "int"}, namedForeignKeys={"col1": 42})
+
+        with self.assertRaises(exceptions.InvalidNamedForeignKeyDictionary):
+            sqlGeneration.gen_create_table("Test", {"col1": "int"}, namedForeignKeys={"col1": {}})
+
+        with self.assertRaises(exceptions.InvalidNamedForeignKeyDictionary):
+            sqlGeneration.gen_create_table("Test", {"col1": "int"}, namedForeignKeys={"col1": {'name': 'testFK'}})
+
+        with self.assertRaises(exceptions.InvalidNamedForeignKeyDictionary):
+            sqlGeneration.gen_create_table("Test", {"col1": "int"}, namedForeignKeys={"col1": {'reference': 'anotherTable(aColumn)'}})
 
     def test_J_INVALID_CHARS(self):
         self.assertEqual(sqlGeneration.INVALID_CHARS, ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t'])

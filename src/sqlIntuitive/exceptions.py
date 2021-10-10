@@ -24,3 +24,6 @@ class InvalidForeignKeyColumn(InvalidConstraint):
 
 class InvalidUniqueColumn(InvalidConstraint):
     pass
+
+class InvalidNamedForeignKeyDictionary(InvalidConstraint):
+    pass

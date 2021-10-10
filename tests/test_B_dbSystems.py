@@ -65,7 +65,7 @@ class TestDBSystems(unittest.TestCase):
         self.mydb.create_cursor()
         self.assertIsNotNone(self.mydb.cursor)
 
-        self.mydb.create_table("TestA", {"name":"varchar(50)","id": "int", "id2": "int", "col3": 'int', "col4": "varchar(50)"}, primaryKeys=['id', 'id2'], foreignKeys={'col3': 'TableB(col2)'}, uniqueColumns=['col4'])
+        self.mydb.create_table("TestA", {"name":"varchar(50)","id": "int", "id2": "int", "col3": 'int', "col4": "varchar(50)", "col5": "int"}, primaryKeys=['id', 'id2'], foreignKeys={'col3': 'TableB(col2)'}, namedForeignKeys={'col5': {'name':'myTestFK', 'reference': "TableB(col2)"}}, uniqueColumns=['col4'])
 
     def test_E_drop_table(self):
         self.assertTrue(self.mydb.connect_to_db())
