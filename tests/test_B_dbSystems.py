@@ -17,6 +17,25 @@ class TestDBSystems(unittest.TestCase):
         with open('tests/mysql_testserver_login.json', 'r') as file:
             cls.mysql_login = json.load(file)
 
+        mydb = dbSystems.MySqlDbSystem(
+            host=cls.mysql_login["host"],
+            database=cls.mysql_login["database"],
+            username=cls.mysql_login["username"],
+            password=cls.mysql_login["password"],
+        )
+
+        mydb.connect_to_db()
+
+        if mydb.dbCon.is_connected():
+            cursor = mydb.dbCon.cursor()
+
+            cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(10), col2 int PRIMARY KEY, col3 tinyint);")
+        else:
+            raise Exception()
+
+        if mydb.dbCon != None and mydb.dbCon.is_connected():
+            mydb.dbCon.close()
+
     def setUp(self):
         self.mydb = dbSystems.MySqlDbSystem(
             host=self.mysql_login["host"],
@@ -25,7 +44,7 @@ class TestDBSystems(unittest.TestCase):
             password=self.mysql_login["password"],
         )
 
-    def tearDowm(self):
+    def tearDown(self):
         if self.mydb.dbCon != None and self.mydb.dbCon.is_connected():
             self.mydb.dbCon.close()
 
