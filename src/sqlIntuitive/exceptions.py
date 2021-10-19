@@ -27,3 +27,18 @@ class InvalidUniqueColumn(InvalidConstraint):
 
 class InvalidNamedForeignKeyDictionary(InvalidConstraint):
     pass
+
+class NotAClass(ParameterException):
+    pass
+
+class NotAFunction(ParameterException):
+    pass
+
+class NotAString(ParameterException):
+    pass
+
+class NotAMatchingClass(ParameterException):
+    pass
+
+class DuplicationError(ParameterException):
+    pass
