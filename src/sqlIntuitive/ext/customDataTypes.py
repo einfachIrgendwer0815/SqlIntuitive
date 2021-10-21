@@ -9,8 +9,6 @@ class AdaptionProvider():
         self.types[stringType.name] = stringType
         self.clss[stringType.cls] = stringType.name
 
-        print(self.types['STR_ENCODED'])
-
     def addDataType(self, dataType):
         if isinstance(dataType, CustomDataType):
             if dataType.name in self.types.keys() or dataType.cls in self.clss.keys():

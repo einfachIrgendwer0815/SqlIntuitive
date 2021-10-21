@@ -30,7 +30,6 @@ class MySqlDbSystem():
                 password=self.password
             )
         except Error as e:
-            print(e)
             sleep(timeout)
 
             if retryNo >= self.max_connect_retries or self.connect_to_db(retryNo+1) == False:
