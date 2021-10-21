@@ -1,6 +1,56 @@
 from base64 import b64encode, b64decode
 from sqlIntuitive import exceptions
 
+class CustomDataType():
+    def __init__(self, name: str, cls, clsToStringFunc, stringToClsFunc):
+        if type(name) != str:
+            raise exceptions.NotAString(f"{type(name)} is not a string.")
+        self.name = name.upper()
+
+        if isinstance(cls, type) != True:
+            raise exceptions.NotAClass(f"{cls} is not a class.")
+        self.cls = cls
+
+        if hasattr(clsToStringFunc, '__call__') != True:
+            raise exceptions.NotAFunction(f"{clsToStringFunc} is not a function.")
+        self.clsToStringFunc = clsToStringFunc
+
+        if hasattr(stringToClsFunc, '__call__') != True:
+            raise exceptions.NotAFunction(f"{stringToClsFunc} is not a function.")
+        self.stringToClsFunc = stringToClsFunc
+
+    def convertToString(self, clsInstance) -> str:
+        if type(clsInstance) != self.cls:
+            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not match {self.cls}.")
+
+        convertedText = self.clsToStringFunc(clsInstance)
+
+        if type(convertedText) != str:
+            raise exceptions.NotAString(f"{self.clsToStringFunc} did not return a string.")
+
+        convertedText = b64encode(convertedText.encode()).decode()
+
+        fullText = f"CUSTOM;{self.name};{convertedText}"
+
+        return fullText
+
+    def convertToClsInstance(self, string: str):
+        if type(string) != str:
+            raise exceptions.NotAString(f"{type(string)} is not a string.")
+
+        splitted = string.split(';')
+
+        if splitted[1] != self.name:
+            return string
+
+        decodedText = b64decode(splitted[2]).decode()
+
+        clsInstance = self.stringToClsFunc(decodedText)
+        if isinstance(clsInstance, self.cls) != True:
+            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not macht {self.cls}.")
+
+        return clsInstance
+
 class AdaptionProvider():
     def __init__(self):
         self.types = {}
@@ -10,7 +60,7 @@ class AdaptionProvider():
         self.types[stringType.name] = stringType
         self.clss[stringType.cls] = stringType.name
 
-    def addDataType(self, dataType):
+    def addDataType(self, dataType: CustomDataType) -> None:
         if isinstance(dataType, CustomDataType):
             if dataType.name in self.types.keys() or dataType.cls in self.clss.keys():
                 raise exceptions.DuplicationError(f"{dataType.name} ({dataType.cls}) are already registered.")
@@ -18,12 +68,12 @@ class AdaptionProvider():
             self.types[dataType.name] = dataType
             self.clss[dataType.cls] = dataType.name
 
-    def addDataType_raw(self, name, cls, clsToStringFunc, stringToClsFunc):
+    def addDataType_raw(self, name: str, cls, clsToStringFunc, stringToClsFunc) -> None:
         dataType = CustomDataType(name, cls, clsToStringFunc, stringToClsFunc)
 
         self.addDataType(dataType)
 
-    def removeDataType(self, name):
+    def removeDataType(self, name: str) -> None:
         if type(name) != str:
             raise exceptions.NotAString(f"{type(name)} is not a string.")
 
@@ -44,7 +94,7 @@ class AdaptionProvider():
         else:
             return instance
 
-    def convertToClsInstance(self, string):
+    def convertToClsInstance(self, string: str) -> str:
         if type(string) != str:
             return string
 
@@ -55,58 +105,8 @@ class AdaptionProvider():
 
         return self.types[splitted[1]].convertToClsInstance(string)
 
-class CustomDataType():
-    def __init__(self, name, cls, clsToStringFunc, stringToClsFunc):
-        if type(name) != str:
-            raise exceptions.NotAString(f"{type(name)} is not a string.")
-        self.name = name.upper()
-
-        if isinstance(cls, type) != True:
-            raise exceptions.NotAClass(f"{cls} is not a class.")
-        self.cls = cls
-
-        if hasattr(clsToStringFunc, '__call__') != True:
-            raise exceptions.NotAFunction(f"{clsToStringFunc} is not a function.")
-        self.clsToStringFunc = clsToStringFunc
-
-        if hasattr(stringToClsFunc, '__call__') != True:
-            raise exceptions.NotAFunction(f"{stringToClsFunc} is not a function.")
-        self.stringToClsFunc = stringToClsFunc
-
-    def convertToString(self, clsInstance):
-        if type(clsInstance) != self.cls:
-            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not match {self.cls}.")
-
-        convertedText = self.clsToStringFunc(clsInstance)
-
-        if type(convertedText) != str:
-            raise exceptions.NotAString(f"{self.clsToStringFunc} did not return a string.")
-
-        convertedText = b64encode(convertedText.encode()).decode()
-
-        fullText = f"CUSTOM;{self.name};{convertedText}"
-
-        return fullText
-
-    def convertToClsInstance(self, string):
-        if type(string) != str:
-            raise exceptions.NotAString(f"{type(string)} is not a string.")
-
-        splitted = string.split(';')
-
-        if splitted[1] != self.name:
-            return string
-
-        decodedText = b64decode(splitted[2]).decode()
-
-        clsInstance = self.stringToClsFunc(decodedText)
-        if isinstance(clsInstance, self.cls) != True:
-            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not macht {self.cls}.")
-
-        return clsInstance
-
 class StringBypassType(CustomDataType):
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.cls = str
 
@@ -120,7 +120,7 @@ class StringBypassType(CustomDataType):
         else:
             return clsInstance
 
-    def convertToClsInstance(self, string):
+    def convertToClsInstance(self, string: str):
         splitted = string.split(';')
 
         decodedText = b64decode(splitted[2]).decode()

@@ -5,14 +5,14 @@ import re
 
 INVALID_CHARS = ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t']
 
-def check_validName(text):
+def check_validName(text: str) -> bool:
     for char in INVALID_CHARS:
         if re.match(f'.*{char}.*', text, re.I):
             return False
 
     return True
 
-def gen_select(tableName, columns=[], conditions={}, conditionCombining="AND", placeholder='?'):
+def gen_select(tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND", placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -43,7 +43,7 @@ def gen_select(tableName, columns=[], conditions={}, conditionCombining="AND", p
 
     return text, column_values_ordered
 
-def gen_insert(tablename, column_values, placeholder="?"):
+def gen_insert(tablename: str, column_values: dict, placeholder: str = "?") -> tuple:
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -72,7 +72,7 @@ def gen_insert(tablename, column_values, placeholder="?"):
 
     return text, column_values_ordered
 
-def gen_update(tableName, newValues, conditions={}, conditionCombining="AND", placeholder="?"):
+def gen_update(tableName: str, newValues: dict, conditions: dict = {}, conditionCombining: str = "AND", placeholder: str = "?") -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -111,7 +111,7 @@ def gen_update(tableName, newValues, conditions={}, conditionCombining="AND", pl
 
     return text, column_values_ordered
 
-def gen_delete(tablename, conditions={}, conditionCombining="AND", placeholder="?"):
+def gen_delete(tablename: str, conditions: dict = {}, conditionCombining: str = "AND", placeholder: str = "?") -> tuple:
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -138,7 +138,7 @@ def gen_delete(tablename, conditions={}, conditionCombining="AND", placeholder="
 
     return text, column_values_ordered
 
-def gen_create_db(dbName):
+def gen_create_db(dbName: str) -> str:
     if check_validName(dbName) == False:
         raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
 
@@ -149,7 +149,7 @@ def gen_create_db(dbName):
 
     return text
 
-def gen_drop_db(dbName):
+def gen_drop_db(dbName: str) -> str:
     if check_validName(dbName) == False:
         raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
 
@@ -160,7 +160,7 @@ def gen_drop_db(dbName):
 
     return text
 
-def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, namedForeignKeys={}, uniqueColumns=[], safeMode=True):
+def gen_create_table(tableName: str, columns: dict, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> str:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -235,7 +235,7 @@ def gen_create_table(tableName, columns, primaryKeys=[], foreignKeys={}, namedFo
 
     return text
 
-def gen_drop_table(tableName):
+def gen_drop_table(tableName: str) -> str:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
