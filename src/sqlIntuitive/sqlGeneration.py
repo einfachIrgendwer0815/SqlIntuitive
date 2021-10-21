@@ -5,7 +5,7 @@ import re
 
 INVALID_CHARS = ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t']
 
-def check_validName(text, raises=None):
+def check_validName(text):
     for char in INVALID_CHARS:
         if re.match(f'.*{char}.*', text, re.I):
             return False
