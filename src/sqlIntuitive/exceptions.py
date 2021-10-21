@@ -4,6 +4,10 @@ class SqlIntuitiveException(Exception):
 class ParameterException(SqlIntuitiveException):
     pass
 
+class AdaptionProviderException(SqlIntuitiveException):
+    pass
+
+# ParameterExceptions
 class DictionaryEmptyException(ParameterException):
     pass
 
@@ -14,18 +18,6 @@ class InvalidDatabaseNameException(ParameterException):
     pass
 
 class InvalidConstraint(ParameterException):
-    pass
-
-class InvalidPrimaryKeyColumn(InvalidConstraint):
-    pass
-
-class InvalidForeignKeyColumn(InvalidConstraint):
-    pass
-
-class InvalidUniqueColumn(InvalidConstraint):
-    pass
-
-class InvalidNamedForeignKeyDictionary(InvalidConstraint):
     pass
 
 class NotAClass(ParameterException):
@@ -40,8 +32,24 @@ class NotAString(ParameterException):
 class NotAMatchingClass(ParameterException):
     pass
 
-class DuplicationError(ParameterException):
+# InvalidConstraint Exceptions
+
+class InvalidPrimaryKeyColumn(InvalidConstraint):
     pass
 
-class DeletingTypeNotAllowed(ParameterException):
+class InvalidForeignKeyColumn(InvalidConstraint):
+    pass
+
+class InvalidUniqueColumn(InvalidConstraint):
+    pass
+
+class InvalidNamedForeignKeyDictionary(InvalidConstraint):
+    pass
+
+# AdaptionProviderExceptions
+
+class DuplicationError(AdaptionProviderException):
+    pass
+
+class DeletingTypeNotAllowed(AdaptionProviderException):
     pass
