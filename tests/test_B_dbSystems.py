@@ -1,4 +1,5 @@
 from sqlIntuitive import dbSystems
+from sqlIntuitive.ext import customDataTypes
 
 import unittest
 
@@ -29,7 +30,7 @@ class TestDBSystems(unittest.TestCase):
         if mydb.dbCon.is_connected():
             cursor = mydb.dbCon.cursor()
 
-            cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(10), col2 int PRIMARY KEY, col3 tinyint);")
+            cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint);")
         else:
             raise Exception()
 
@@ -122,3 +123,17 @@ class TestDBSystems(unittest.TestCase):
 
         self.mydb.delete_from("TableB", {"col2": 84})
         self.mydb.delete_from("TableB")
+
+    def test_J_adaptionProvider(self):
+        self.assertTrue(isinstance(self.mydb.adaptProvider, customDataTypes.AdaptionProvider))
+
+        adaptProvider = customDataTypes.AdaptionProvider()
+        mydb2 = dbSystems.MySqlDbSystem(
+            host=self.mysql_login["host"],
+            database=self.mysql_login["database"],
+            username=self.mysql_login["username"],
+            password=self.mysql_login["password"],
+            adaptionProvider=adaptProvider
+        )
+
+        self.assertEqual(mydb2.adaptProvider, adaptProvider)

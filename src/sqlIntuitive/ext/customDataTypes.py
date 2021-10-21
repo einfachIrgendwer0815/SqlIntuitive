@@ -105,6 +105,16 @@ class AdaptionProvider():
 
         return self.types[splitted[1]].convertToClsInstance(string)
 
+    def convertDictToString(self, dictionary: dict) -> dict:
+        if type(dictionary) != dict:
+            return dictionary
+
+        dictionary = dictionary.copy()
+        for key in dictionary.keys():
+            dictionary[key] = self.convertToString(dictionary[key])
+
+        return dictionary
+
 class StringBypassType(CustomDataType):
     def __init__(self, name: str):
         self.name = name
