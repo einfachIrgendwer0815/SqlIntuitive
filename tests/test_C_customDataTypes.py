@@ -1,4 +1,5 @@
 from sqlIntuitive.ext import customDataTypes
+from sqlIntuitive import exceptions
 
 import unittest
 
@@ -12,7 +13,9 @@ with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as fil
 
 @unittest.skipIf(runTestCustomDataTypes == False, 'Skipped TestDBSystems via config')
 class TestcustomDataTypes(unittest.TestCase):
-    def test_A_customDataType_init(self):
+    def setUpClass():
+        cls = TestcustomDataTypes
+
         class Test():
             pass
 
@@ -22,11 +25,10 @@ class TestcustomDataTypes(unittest.TestCase):
         def stringToCls(string):
             return Test()
 
-        customType = customDataTypes.CustomDataType("Test", Test, clsToString, stringToCls)
+        cls.Test = Test
+        cls.clsToString = clsToString
+        cls.stringToCls = stringToCls
 
-        self.assertEqual(customType.name, "TEST")
-
-    def test_B_customDataType_convertToString(self):
         class TestB():
             def __init__(self, num):
                 self.num = num
@@ -37,12 +39,36 @@ class TestcustomDataTypes(unittest.TestCase):
         def stringToTestB(string):
             return TestB(int(string))
 
-        customType = customDataTypes.CustomDataType("Test", TestB, testBToString, stringToTestB)
+        cls.TestB = TestB
+        cls.testBToString = testBToString
+        cls.stringToTestB = stringToTestB
 
-        self.assertEqual(customType.convertToString( TestB(123) ), "CUSTOM;TEST;MTIz")
+        class MyClass():
+            def __init__(self, arg):
+                self.arg = arg
+
+        def myClassToString(clsInstance):
+            return str(clsInstance.arg)
+
+        def stringToMyClass(string):
+            return MyClass(string)
+
+        cls.MyClass = MyClass
+        cls.myClassToString = myClassToString
+        cls.stringToMyClass = stringToMyClass
+
+    def test_A_customDataType_init(self):
+        customType = customDataTypes.CustomDataType("Test", TestcustomDataTypes.Test, TestcustomDataTypes.clsToString, TestcustomDataTypes.stringToCls)
+
+        self.assertEqual(customType.name, "TEST")
+
+    def test_B_customDataType_convertToString(self):
+        customType = customDataTypes.CustomDataType("Test", TestcustomDataTypes.TestB, TestcustomDataTypes.testBToString, TestcustomDataTypes.stringToTestB)
+
+        self.assertEqual(customType.convertToString( TestcustomDataTypes.TestB(123) ), "CUSTOM;TEST;MTIz")
 
         instance = customType.convertToClsInstance("CUSTOM;TEST;MTIz")
-        self.assertTrue(isinstance(instance, TestB))
+        self.assertTrue(isinstance(instance, TestcustomDataTypes.TestB))
         self.assertEqual(instance.num, 123)
 
     def test_C_adaptionProvider_normalValues(self):
@@ -61,23 +87,38 @@ class TestcustomDataTypes(unittest.TestCase):
         self.assertEqual(adaptProvider.convertToClsInstance("CUSTOM;STR_ENCODED;Q1VTVE9NOzR2NjdxODkzNm1ucHEy"), "CUSTOM;4v67q8936mnpq2")
 
     def test_E_adaptionProvider_customType(self):
-        class MyClass():
-            def __init__(self, arg):
-                self.arg = arg
-
-        def myClassToString(clsInstance):
-            return str(clsInstance.arg)
-
-        def stringToMyClass(string):
-            return MyClass(string)
-
         adaptProvider = customDataTypes.AdaptionProvider()
 
-        dataType = customDataTypes.CustomDataType("MYCLS", MyClass, myClassToString, stringToMyClass)
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
         adaptProvider.addDataType(dataType)
 
-        self.assertEqual(adaptProvider.convertToString(MyClass("abc")), "CUSTOM;MYCLS;YWJj")
-        
+        self.assertEqual(adaptProvider.convertToString(TestcustomDataTypes.MyClass("abc")), "CUSTOM;MYCLS;YWJj")
+
         clsInstance = adaptProvider.convertToClsInstance("CUSTOM;MYCLS;YWJj")
-        self.assertEqual(type(clsInstance), MyClass)
+        self.assertEqual(type(clsInstance), TestcustomDataTypes.MyClass)
         self.assertEqual(clsInstance.arg, "abc")
+
+    def test_F_adaptionProvicer_raw_add(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+
+        adaptProvider.addDataType_raw("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+
+        self.assertTrue("MYCLS" in adaptProvider.types)
+
+    def test_G_adaptionProvider_removeDataType(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+        adaptProvider.addDataType(dataType)
+
+        self.assertTrue("MYCLS" in adaptProvider.types)
+
+        adaptProvider.removeDataType(dataType.name)
+
+        self.assertFalse("MYCLS" in adaptProvider.types, {})
+
+    def test_H_adaptionProvider_keep_string_bypass(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+
+        with self.assertRaises(exceptions.DeletingTypeNotAllowed):
+            adaptProvider.removeDataType("STR_ENCODED")

@@ -42,3 +42,6 @@ class NotAMatchingClass(ParameterException):
 
 class DuplicationError(ParameterException):
     pass
+
+class DeletingTypeNotAllowed(ParameterException):
+    pass

@@ -1,4 +1,5 @@
 from base64 import b64encode, b64decode
+from sqlIntuitive import exceptions
 
 class AdaptionProvider():
     def __init__(self):
@@ -16,6 +17,26 @@ class AdaptionProvider():
 
             self.types[dataType.name] = dataType
             self.clss[dataType.cls] = dataType.name
+
+    def addDataType_raw(self, name, cls, clsToStringFunc, stringToClsFunc):
+        dataType = CustomDataType(name, cls, clsToStringFunc, stringToClsFunc)
+
+        self.addDataType(dataType)
+
+    def removeDataType(self, name):
+        if type(name) != str:
+            raise exceptions.NotAString(f"{type(name)} is not a string.")
+
+        if name.upper() == "STR_ENCODED":
+            raise exceptions.DeletingTypeNotAllowed("It is not allowed to remove STR_ENCODED.")
+
+        elif name.upper() not in self.types.keys():
+            raise KeyError(f"{name}-type is not set.")
+
+        cls = self.types[name].cls
+
+        del self.clss[cls]
+        del self.types[name]
 
     def convertToString(self, instance):
         if type(instance) in self.clss.keys():
