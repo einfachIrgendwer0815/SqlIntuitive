@@ -117,8 +117,58 @@ class TestcustomDataTypes(unittest.TestCase):
 
         self.assertFalse("MYCLS" in adaptProvider.types, {})
 
-    def test_H_adaptionProvider_keep_string_bypass(self):
-        adaptProvider = customDataTypes.AdaptionProvider()
+    def test_H_customDataType_error_test(self):
+        with self.assertRaises(exceptions.NotAString):
+            dataType = customDataTypes.CustomDataType(123, TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
 
+        with self.assertRaises(exceptions.NotAClass):
+            dataType = customDataTypes.CustomDataType("MYCLS", "abc", TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+
+        with self.assertRaises(exceptions.NotAFunction):
+            dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, None, TestcustomDataTypes.stringToMyClass)
+
+        with self.assertRaises(exceptions.NotAFunction):
+            dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, None)
+
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+        with self.assertRaises(exceptions.NotAMatchingClass):
+            dataType.convertToString(TestcustomDataTypes.TestB(123))
+
+        def wrongConvertToString(clsInstance):
+            return clsInstance
+
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, wrongConvertToString, TestcustomDataTypes.stringToMyClass)
+        with self.assertRaises(exceptions.NotAString):
+            dataType.convertToString(TestcustomDataTypes.MyClass(123))
+
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+        with self.assertRaises(exceptions.NotAString):
+            dataType.convertToClsInstance(123)
+
+        def wrongConvertToClsInstance(string):
+            return string
+
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, wrongConvertToClsInstance)
+        with self.assertRaises(exceptions.NotAMatchingClass):
+            dataType.convertToClsInstance("CUSTOM;MYCLS;MTIz")
+
+    def test_I_adaptionProvider_error_test(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+        dataType2 = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+        adaptProvider.addDataType(dataType)
+
+        with self.assertRaises(exceptions.DuplicationError):
+            adaptProvider.addDataType(dataType2)
+
+        adaptProvider = customDataTypes.AdaptionProvider()
+        with self.assertRaises(exceptions.NotAString):
+            adaptProvider.removeDataType(123)
+
+        adaptProvider = customDataTypes.AdaptionProvider()
         with self.assertRaises(exceptions.DeletingTypeNotAllowed):
             adaptProvider.removeDataType("STR_ENCODED")
+
+        adaptProvider = customDataTypes.AdaptionProvider()
+        with self.assertRaises(KeyError):
+            adaptProvider.removeDataType("ABC")
