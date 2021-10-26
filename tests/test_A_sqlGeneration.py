@@ -14,7 +14,49 @@ with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as fil
 
 @unittest.skipIf(runTestSqlGeneration == False, 'Skipped TestSqlGeneration via config')
 class TestSqlGeneration(unittest.TestCase):
-    def test_A_gen_insert(self):
+    def test_A_a_gen_conditions(self):
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}), ('abc=? AND xyz=? AND test>?', ['def', 123, 42]))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, defaultComparison=sqlGeneration.ComparisonTypes.LESS_THAN_OR_EQUAL_TO), ('abc<=? AND xyz<=? AND test>?', ['def', 123, 42]))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, defaultCombination=sqlGeneration.CombinationTypes.OR), ('abc=? OR xyz=? OR test>?', ['def', 123, 42]))
+
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, combinations=[sqlGeneration.CombinationTypes.OR]), ('abc=? OR xyz=? AND test>?', ['def', 123, 42]))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, combinations=[sqlGeneration.CombinationTypes.OR, sqlGeneration.CombinationTypes.AND, sqlGeneration.CombinationTypes.OR]), ('abc=? OR xyz=? AND test>?', ['def', 123, 42]))
+
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, defaultCombination=sqlGeneration.CombinationTypes.OR), ('abc=? OR xyz=? OR test>?', ['def', 123, 42]))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': sqlGeneration.ComparisonTypes.GREATER_THAN}}, combinations=[sqlGeneration.CombinationTypes.AND], defaultCombination=sqlGeneration.CombinationTypes.OR), ('abc=? AND xyz=? OR test>?', ['def', 123, 42]))
+
+        self.assertEqual(sqlGeneration.gen_conditions(), ('',[]))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc':'def', 'x':'y'}, defaultCombination="OR"), ('abc=? OR x=?',['def','y']))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc':'def', 'x':'y'}, defaultComparison=">="), ('abc>=? AND x>=?',['def','y']))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc':'def', 'x':{'value': 'y', 'comparison': ">="}}), ('abc=? AND x>=?',['def','y']))
+        self.assertEqual(sqlGeneration.gen_conditions({'abc':'def', 'x':'y', 'hello': 'world'}, combinations=["OR", "AND"]), ('abc=? OR x=? AND hello=?',['def','y','world']))
+
+    def test_A_b_gen_conditions(self):
+        with self.assertRaises(exceptions.InvalidType):
+            sqlGeneration.gen_conditions(['test'])
+
+        with self.assertRaises(exceptions.InvalidType):
+            sqlGeneration.gen_conditions(combinations={})
+
+        with self.assertRaises(exceptions.NotACombinationType):
+            sqlGeneration.gen_conditions(defaultCombination='abc')
+
+        with self.assertRaises(exceptions.NotACombinationType):
+            sqlGeneration.gen_conditions({}, combinations=[sqlGeneration.CombinationTypes.AND, 'xyz'])
+
+        with self.assertRaises(exceptions.NotAComparisonType):
+            sqlGeneration.gen_conditions(defaultComparison="abc")
+
+        with self.assertRaises(exceptions.NotAComparisonType):
+            sqlGeneration.gen_conditions({'abc': {'value': 'def', 'comparison': 'xy'}})
+
+        with self.assertRaises(exceptions.NoValue):
+            sqlGeneration.gen_conditions({'abc': {}})
+
+        with self.assertRaises(exceptions.NoValue):
+            sqlGeneration.gen_conditions({'abc': {'comparison': sqlGeneration.ComparisonTypes.EQUAL_TO}})
+
+    def test_A_b_gen_insert(self):
         self.assertEqual(sqlGeneration.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}), ("INSERT INTO TestA (colA, colB, colC) VALUES (?, ?, ?);", ['val1', 123, True]))
 
     def test_B_gen_insert(self):

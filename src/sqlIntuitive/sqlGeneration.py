@@ -1,4 +1,5 @@
 from sqlIntuitive import exceptions
+from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 
 import string
 import re
@@ -11,6 +12,83 @@ def check_validName(text: str) -> bool:
             return False
 
     return True
+
+def gen_conditions(conditions: dict = {}, combinations: list = [], defaultCombination: CombinationTypes = CombinationTypes.AND, defaultComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
+    if type(conditions) != dict:
+        raise exceptions.InvalidType(f'{type(conditions)} is not a dict')
+
+    if type(combinations) != list:
+        raise exceptions.InvalidType(f'{type(combinations)} is not a list')
+
+    if type(defaultCombination) != CombinationTypes:
+        try:
+            defaultCombination = CombinationTypes(defaultCombination)
+        except ValueError:
+            raise exceptions.NotACombinationType(f'{type(defaultCombination)} is not a combination type')
+
+    if type(defaultComparison) != ComparisonTypes:
+        try:
+            defaultComparison = ComparisonTypes(defaultComparison)
+        except ValueError:
+            raise exceptions.NotAComparisonType(f'{type(defaultComparison)} is not a comparison type')
+
+    combinations = combinations.copy()
+    combinations_new = []
+
+    for combination in combinations:
+        if type(combination) != CombinationTypes:
+            try:
+                combination = CombinationTypes(combination)
+            except ValueError:
+                raise exceptions.NotACombinationType(f'{type(combination)} is not a combination type')
+        combinations_new.append(combination)
+
+    combinations = combinations_new
+    del combinations_new
+
+    conditionTexts = []
+    values_ordered = []
+
+    text = ""
+
+    for column in conditions.keys():
+        if type(conditions[column]) == dict:
+            if 'value' not in conditions[column].keys():
+                raise exceptions.NoValue(f'no value for column {column}')
+
+            if 'comparison' in conditions[column].keys():
+                comparison = conditions[column]['comparison']
+                if type(comparison) != ComparisonTypes:
+                    try:
+                        comparison = ComparisonTypes(comparison)
+                    except ValueError:
+                        raise exceptions.NotAComparisonType(f'{type(conditions[column]["comparison"])} is not a comparison type.')
+
+                conditionTexts.append(f'{column}{comparison.value}{placeholder}')
+                values_ordered.append(conditions[column]["value"])
+
+            else:
+                conditionTexts.append(f'{column}{defaultComparison.value}{placeholder}')
+                values_ordered.append(conditions[column]["value"])
+        else:
+            conditionTexts.append(f'{column}{defaultComparison.value}{placeholder}')
+            values_ordered.append(conditions[column])
+
+    diff = len(conditionTexts) - 1 - len(combinations)
+    if diff > 0:
+        combinations += [ defaultCombination for _ in range(diff) ]
+
+    for index in range(len(conditionTexts)):
+        if index != 0:
+            text += ' '
+
+        text += f'{conditionTexts[index]}'
+
+        if index < len(conditionTexts)-1:
+            text += f' {combinations[index].value}'
+
+    return text, values_ordered
+
 
 def gen_select(tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND", placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:

@@ -7,7 +7,24 @@ class ParameterException(SqlIntuitiveException):
 class AdaptionProviderException(SqlIntuitiveException):
     pass
 
+class ConditionException(SqlIntuitiveException):
+    pass
+
+# ConditionExceptions
+
+class NotAComparisonType(ConditionException):
+    pass
+
+class NotACombinationType(ConditionException):
+    pass
+
+class NoValue(ConditionException):
+    pass
+
 # ParameterExceptions
+class InvalidType(ParameterException):
+    pass
+
 class DictionaryEmptyException(ParameterException):
     pass
 
