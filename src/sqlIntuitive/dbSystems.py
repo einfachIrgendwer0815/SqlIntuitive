@@ -86,7 +86,7 @@ class MySqlDbSystem():
         adaptedNewColumnValues = self.adaptProvider.convertDictToString(newColumnValues)
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_update(tableName, adaptedNewColumnValues, adaptedConditions, conditionCombining, placeholder='%s')
+        sql, column_values_ordered = sqlGeneration.gen_update(tableName=tableName, newValues=adaptedNewColumnValues, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder='%s')
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -95,7 +95,7 @@ class MySqlDbSystem():
     def delete_from(self, tableName: str, conditions: dict = {}, conditionCombining: str = "AND") -> None:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_delete(tableName, adaptedConditions, conditionCombining, placeholder='%s')
+        sql, column_values_ordered = sqlGeneration.gen_delete(tableName=tableName, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder='%s')
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -104,7 +104,7 @@ class MySqlDbSystem():
     def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND") -> None:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_select(tableName, columns, adaptedConditions, conditionCombining, placeholder='%s')
+        sql, column_values_ordered = sqlGeneration.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder='%s')
 
         self.cursor.execute(sql, column_values_ordered)
 

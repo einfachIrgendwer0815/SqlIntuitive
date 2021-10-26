@@ -75,7 +75,7 @@ class TestSqlGeneration(unittest.TestCase):
 
     def test_D_gen_delete(self):
         self.assertEqual(sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}), ("DELETE FROM TestD WHERE colXY=? AND id=?;", ['ABC', 12345]))
-        self.assertEqual(sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}, 'OR'), ("DELETE FROM TestD WHERE colXY=? OR id=?;", ['ABC', 12345]))
+        self.assertEqual(sqlGeneration.gen_delete("TestD", {"colXY": "ABC", "id": 12345}, conditionCombining='OR'), ("DELETE FROM TestD WHERE colXY=? OR id=?;", ['ABC', 12345]))
         self.assertEqual(sqlGeneration.gen_delete("TestD"), ("DELETE FROM TestD;", []))
 
     def test_E_gen_delete(self):
@@ -244,7 +244,7 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': True}), ("UPDATE TableA SET col1=? WHERE col5=?;", [42, True]))
         self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42}), ("UPDATE TableA SET col1=? WHERE col5=?;", [42, 42]))
 
-        self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, "OR"), ("UPDATE TableA SET col1=? WHERE col5=? OR colB=?;", [42, 42, 'welt']))
+        self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, conditionCombining="OR"), ("UPDATE TableA SET col1=? WHERE col5=? OR colB=?;", [42, 42, 'welt']))
         self.assertEqual(sqlGeneration.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}), ("UPDATE TableA SET col1=? WHERE col5=? AND colB=?;", [42, 42, 'welt']))
 
     def test_N_gen_update(self):
