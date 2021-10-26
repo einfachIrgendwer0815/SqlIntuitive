@@ -111,7 +111,12 @@ class AdaptionProvider():
 
         dictionary = dictionary.copy()
         for key in dictionary.keys():
-            dictionary[key] = self.convertToString(dictionary[key])
+            if type(dictionary[key]) == dict:
+                if 'value' not in dictionary[key].keys():
+                    raise exceptions.NoValue(f'no value for {key}')
+                dictionary[key]['value'] = self.convertToString(dictionary[key]['value'])
+            else:
+                dictionary[key] = self.convertToString(dictionary[key])
 
         return dictionary
 

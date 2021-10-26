@@ -1,5 +1,6 @@
 from sqlIntuitive import dbSystems
 from sqlIntuitive.ext import customDataTypes
+from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 
 import unittest
 
@@ -108,6 +109,7 @@ class TestDBSystems(unittest.TestCase):
         self.assertIsNotNone(self.mydb.cursor)
 
         self.mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
+        self.mydb.update("TableB", {"col3": False, "col2": 44}, {"col2": {'value': 43, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
 
     def test_H_select_from(self):
         self.assertTrue(self.mydb.connect_to_db())
@@ -115,6 +117,7 @@ class TestDBSystems(unittest.TestCase):
         self.assertIsNotNone(self.mydb.cursor)
 
         self.mydb.select_from("TableB")
+        self.mydb.select_from("TableB", conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
 
     def test_I_delete(self):
         self.assertTrue(self.mydb.connect_to_db())
@@ -122,6 +125,7 @@ class TestDBSystems(unittest.TestCase):
         self.assertIsNotNone(self.mydb.cursor)
 
         self.mydb.delete_from("TableB", {"col2": 84})
+        self.mydb.delete_from("TableB", {"col2": {'value': 80, 'comparison': ComparisonTypes.EQUAL_TO}})
         self.mydb.delete_from("TableB")
 
     def test_J_adaptionProvider(self):
