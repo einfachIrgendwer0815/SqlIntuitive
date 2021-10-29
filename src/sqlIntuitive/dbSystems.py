@@ -111,7 +111,6 @@ class MySqlDbSystem():
         res = self.cursor.fetchall()
 
         for index in range(len(res)):
-            print(res[index])
             res[index] = self.adaptProvider.convertTupleToClsInstance(res[index])
 
         return res
