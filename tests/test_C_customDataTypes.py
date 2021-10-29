@@ -1,5 +1,5 @@
 from sqlIntuitive.ext import customDataTypes
-from sqlIntuitive import exceptions
+from sqlIntuitive import exceptions, conditionEnums
 
 import unittest
 
@@ -188,3 +188,18 @@ class TestcustomDataTypes(unittest.TestCase):
 
         self.assertEqual(converted[1], 123)
         self.assertEqual(converted[2], 'CUSTOM;blablabla')
+
+    def test_K_convertDictToString(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+
+        adaptProvider.addDataType(dataType)
+
+        clsInstance = TestcustomDataTypes.MyClass('Test')
+        testDict = {'col1': {'value': clsInstance}, 'col2': {'value': 123, 'comparison': conditionEnums.ComparisonTypes.EQUAL_TO}}
+
+        converted = adaptProvider.convertDictToString(testDict)
+
+        expected =  {'col1': {'value': 'CUSTOM;MYCLS;VGVzdA=='}, 'col2': {'value': 123, 'comparison': conditionEnums.ComparisonTypes.EQUAL_TO}}
+
+        self.assertEqual(converted, expected)
