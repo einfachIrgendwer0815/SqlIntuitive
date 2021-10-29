@@ -58,7 +58,7 @@ class TestDBSystems(unittest.TestCase):
         self.mydb.connect_to_db()
         cursor = self.mydb.dbCon.cursor()
 
-        #cursor.execute("DELETE FROM TableB;")
+        cursor.execute("DELETE FROM TableB;")
         self.mydb.dbCon.commit()
 
     def test_A_connect_to_db(self):
@@ -180,6 +180,9 @@ class TestDBSystems(unittest.TestCase):
         dataType = customDataTypes.CustomDataType("TESTCLS", TestClass, testClassToString, stringToTestClass)
 
         self.mydb.addDataType(dataType)
+
+        self.assertTrue('TESTCLS' in self.mydb.adaptProvider.types)
+
         self.mydb.connect_to_db()
         self.mydb.create_cursor()
 

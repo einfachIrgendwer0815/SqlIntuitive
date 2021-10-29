@@ -103,6 +103,9 @@ class AdaptionProvider():
 
         splitted = string.split(';')
 
+    #    if splitted[1] not in self.types.keys():
+    #        raise KeyError(f'Type {splitted[1]} is not registered')
+
         return self.types[splitted[1]].convertToClsInstance(string)
 
     def convertDictToString(self, dictionary: dict) -> dict:
@@ -119,6 +122,17 @@ class AdaptionProvider():
                 dictionary[key] = self.convertToString(dictionary[key])
 
         return dictionary
+
+    def convertTupleToClsInstance(self, tupleToConvert: tuple) -> tuple:
+        if type(tupleToConvert) != tuple:
+            return tupleToConvert
+
+        converted = []
+
+        for item in tupleToConvert:
+            converted.append(self.convertToClsInstance(item))
+
+        return tuple(converted)
 
 class StringBypassType(CustomDataType):
     def __init__(self, name: str):

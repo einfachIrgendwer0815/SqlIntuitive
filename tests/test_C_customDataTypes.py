@@ -172,3 +172,19 @@ class TestcustomDataTypes(unittest.TestCase):
         adaptProvider = customDataTypes.AdaptionProvider()
         with self.assertRaises(KeyError):
             adaptProvider.removeDataType("ABC")
+
+    def test_J_convertTupleToClsInstance(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+        dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
+
+        adaptProvider.addDataType(dataType)
+
+        testTuple = ('CUSTOM;MYCLS;VGVzdA==', 123, "CUSTOM;STR_ENCODED;Q1VTVE9NO2JsYWJsYWJsYQ==")
+
+        converted = adaptProvider.convertTupleToClsInstance(testTuple)
+
+        self.assertTrue(isinstance(converted[0], TestcustomDataTypes.MyClass))
+        self.assertEqual(converted[0].arg, 'Test')
+
+        self.assertEqual(converted[1], 123)
+        self.assertEqual(converted[2], 'CUSTOM;blablabla')

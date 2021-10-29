@@ -101,11 +101,17 @@ class MySqlDbSystem():
 
         self.dbCon.commit()
 
-    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND") -> None:
+    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND") -> list:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
         sql, column_values_ordered = sqlGeneration.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder='%s')
 
         self.cursor.execute(sql, column_values_ordered)
 
-        return self.cursor.fetchall()
+        res = self.cursor.fetchall()
+
+        for index in range(len(res)):
+            print(res[index])
+            res[index] = self.adaptProvider.convertTupleToClsInstance(res[index])
+
+        return res
