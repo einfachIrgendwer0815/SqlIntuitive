@@ -173,6 +173,10 @@ class TestcustomDataTypes(unittest.TestCase):
         with self.assertRaises(KeyError):
             adaptProvider.removeDataType("ABC")
 
+        adaptProvider = customDataTypes.AdaptionProvider()
+        with self.assertRaises(exceptions.NoValue):
+            adaptProvider.convertDictToString({'col1': {}})
+
     def test_J_convertTupleToClsInstance(self):
         adaptProvider = customDataTypes.AdaptionProvider()
         dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
@@ -190,6 +194,17 @@ class TestcustomDataTypes(unittest.TestCase):
         self.assertEqual(converted[2], 'CUSTOM;blablabla')
 
     def test_K_convertDictToString(self):
+        adaptProvider = customDataTypes.AdaptionProvider()
+
+        testDict = {'col1': 123, 'col2': 'abc', 'col3': 'CUSTOM;anythinggoeshere'}
+
+        converted = adaptProvider.convertDictToString(testDict)
+
+        expected = {'col1': 123, 'col2': 'abc', 'col3': 'CUSTOM;STR_ENCODED;Q1VTVE9NO2FueXRoaW5nZ29lc2hlcmU='}
+
+        self.assertEqual(converted, expected)
+
+    def test_L_convertDictToString_customDataType(self):
         adaptProvider = customDataTypes.AdaptionProvider()
         dataType = customDataTypes.CustomDataType("MYCLS", TestcustomDataTypes.MyClass, TestcustomDataTypes.myClassToString, TestcustomDataTypes.stringToMyClass)
 
