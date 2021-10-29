@@ -50,6 +50,17 @@ class TestDBSystems(unittest.TestCase):
         if self.mydb.dbCon != None and self.mydb.dbCon.is_connected():
             self.mydb.dbCon.close()
 
+        self.setUp()
+        self.clearTableB()
+        self.mydb.dbCon.close()
+
+    def clearTableB(self):
+        self.mydb.connect_to_db()
+        cursor = self.mydb.dbCon.cursor()
+
+        #cursor.execute("DELETE FROM TableB;")
+        self.mydb.dbCon.commit()
+
     def test_A_connect_to_db(self):
         self.assertTrue(self.mydb.connect_to_db())
         self.assertIsNotNone(self.mydb.dbCon)
@@ -141,3 +152,38 @@ class TestDBSystems(unittest.TestCase):
         )
 
         self.assertEqual(mydb2.adaptProvider, adaptProvider)
+
+    def test_K_str_encoded(self):
+        self.assertTrue(isinstance(self.mydb.adaptProvider, customDataTypes.AdaptionProvider))
+
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.insert_into("TableB", {'col1': "CUSTOM;", 'col2': 6473573})
+
+        res = self.mydb.select_from("TableB", columns=['col1'], conditions={'col2': 6473573})
+        self.assertEqual(res, [("CUSTOM;",)])
+
+    def test_L_customDataType(self):
+        self.assertTrue(isinstance(self.mydb.adaptProvider, customDataTypes.AdaptionProvider))
+
+        class TestClass():
+            def __init__(self, num):
+                self.num = num
+
+        def testClassToString(instance):
+            return str(instance.num)
+
+        def stringToTestClass(string):
+            return TestClass(int(string))
+
+        dataType = customDataTypes.CustomDataType("TESTCLS", TestClass, testClassToString, stringToTestClass)
+
+        self.mydb.addDataType(dataType)
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.insert_into("TableB", {'col1': TestClass(123), 'col2': 567})
+        res = self.mydb.select_from("TableB", conditions={'col2': 567})
+
+        self.assertTrue(isinstance(res[0][0], TestClass))
