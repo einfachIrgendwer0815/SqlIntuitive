@@ -103,8 +103,8 @@ class AdaptionProvider():
 
         splitted = string.split(';')
 
-    #    if splitted[1] not in self.types.keys():
-    #        raise KeyError(f'Type {splitted[1]} is not registered')
+        if splitted[1] not in self.types.keys():
+            raise KeyError(f'Type {splitted[1]} is not registered')
 
         return self.types[splitted[1]].convertToClsInstance(string)
 
