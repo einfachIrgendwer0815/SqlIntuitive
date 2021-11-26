@@ -1,6 +1,6 @@
 {
-  "host": "127.0.0.1",
-  "database": "werwolf",
-  "username": "werwolfClient",
-  "password": "password"
+  "host": "SERVER_IP",
+  "database": "DATABASENAME",
+  "username": "USERNAME",
+  "password": "PASSWORD"
 }

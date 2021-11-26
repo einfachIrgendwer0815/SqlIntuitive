@@ -1,0 +1,4 @@
+include requirements.txt
+include version.json
+graft docs
+recursive-include tests *.py *[dD]efault.json
