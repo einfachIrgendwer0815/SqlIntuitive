@@ -1,5 +1,5 @@
 {
   "sqlGeneration": true,
-  "dbSystems": true,
+  "mysqlSystem": true,
   "customDataTypes": true
 }
