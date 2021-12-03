@@ -6,9 +6,6 @@ from time import sleep
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 
-class SqliteDbSystem():
-    pass
-
 class MySqlDbSystem():
     def __init__(self, host: str, database: str, username: str, password: str, adaptionProvider: AdaptionProvider = None, max_connect_retries: int = 5) -> None:
         self.host = host
