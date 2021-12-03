@@ -24,7 +24,7 @@ class SqliteDbSystem():
         self.adaptProvider.addDataType_raw(name, cls, clsToStringFunc, stringToClsFunc)
 
     def connect_to_db(self) -> None:
-        self.dbCon = sqlite3.connect(self.database, self.timeout)
+        self.dbCon = sqlite3.connect(self.databaseFile, self.timeout)
 
     def close_connection(self) -> None:
         self.dbCon.close()
@@ -34,4 +34,3 @@ class SqliteDbSystem():
             return
 
         self.cursor = self.dbCon.cursor()
-    

@@ -1,5 +1,6 @@
 {
   "sqlGeneration": true,
   "mysqlSystem": true,
-  "customDataTypes": true
+  "customDataTypes": true,
+  "sqliteSystem": true
 }
