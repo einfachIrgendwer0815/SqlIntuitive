@@ -1,1 +1,1 @@
-from sqlIntuitive.ext import customDataTypes, mirror
+from sqlIntuitive.ext import customDataTypes
