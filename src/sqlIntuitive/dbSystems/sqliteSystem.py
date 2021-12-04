@@ -2,21 +2,15 @@ import sqlite3
 
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
+from sqlIntuitive.dbSystems import BaseDbSystem
 
-class SqliteDbSystem():
+class SqliteDbSystem(BaseDbSystem):
+    placeholder="?"
+    
     def __init__(self, database: str, timeout: int = 5, adaptionProvider: AdaptionProvider = None):
-        self.databaseFile = database
-
-        if isinstance(adaptionProvider, AdaptionProvider):
-            self.adaptProvider = adaptionProvider
-        else:
-            self.adaptProvider = AdaptionProvider()
+        super().__init__(database, adaptionProvider)
 
         self.timeout = timeout
-
-        self.dbCon = None
-        self.cursor = None
-
         self.open = False
 
     def addDataType(self, dataType: CustomDataType) -> None:
@@ -27,7 +21,7 @@ class SqliteDbSystem():
 
     def connect_to_db(self) -> None:
         if self.open == False:
-            self.dbCon = sqlite3.connect(self.databaseFile, self.timeout)
+            self.dbCon = sqlite3.connect(self.database, self.timeout)
 
             self.open = True
 
