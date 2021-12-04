@@ -8,7 +8,7 @@ class SqliteDbSystem():
         self.databaseFile = database
 
         if isinstance(adaptionProvider, AdaptionProvider):
-            self.adaptProvider = adaptProvider
+            self.adaptProvider = adaptionProvider
         else:
             self.adaptProvider = AdaptionProvider()
 
@@ -17,6 +17,8 @@ class SqliteDbSystem():
         self.dbCon = None
         self.cursor = None
 
+        self.open = False
+
     def addDataType(self, dataType: CustomDataType) -> None:
         self.adaptProvider.addDataType(dataType)
 
@@ -24,13 +26,25 @@ class SqliteDbSystem():
         self.adaptProvider.addDataType_raw(name, cls, clsToStringFunc, stringToClsFunc)
 
     def connect_to_db(self) -> None:
-        self.dbCon = sqlite3.connect(self.databaseFile, self.timeout)
+        if self.open == False:
+            self.dbCon = sqlite3.connect(self.databaseFile, self.timeout)
+
+            self.open = True
 
     def close_connection(self) -> None:
-        self.dbCon.close()
+        if self.open != True:
+            return
+
+        if self.cursor != None:
+            self.cursor.close()
+
+        if self.dbCon != None:
+            self.dbCon.close()
+
+        self.open = False
 
     def create_cursor(self) -> None:
-        if self.cursor != None or self.dbCon == None:
+        if self.cursor != None or self.dbCon == None or self.open == False:
             return
 
         self.cursor = self.dbCon.cursor()

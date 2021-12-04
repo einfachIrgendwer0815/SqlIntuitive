@@ -1,4 +1,5 @@
 from sqlIntuitive import dbSystems
+from sqlIntuitive.ext import customDataTypes
 
 import unittest
 
@@ -31,4 +32,20 @@ class TestSqliteSystem(unittest.TestCase):
         self.mydb.create_cursor()
 
         self.assertIsNotNone(self.mydb.cursor)
-    
+
+    def test_C_adaptionProvider(self):
+        self.assertTrue(isinstance(self.mydb.adaptProvider, customDataTypes.AdaptionProvider))
+
+        adaptProvider = customDataTypes.AdaptionProvider()
+        mydb2 = dbSystems.SqliteDbSystem(":memory:", adaptionProvider=adaptProvider)
+
+        self.assertEqual(mydb2.adaptProvider, adaptProvider)
+
+    def test_D_open_close(self):
+        self.mydb.create_cursor() # Won't work but no error is raised
+
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+        self.mydb.close_connection()
+
+        self.mydb.create_cursor() # Won't work too but still no error is raised
