@@ -10,10 +10,10 @@ defaultFile = 'tests/testsToRun.json'
 altFile = 'tests/testsToRunDefault.json'
 
 with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as file:
-    runTestDBSystems = json.load(file)['dbSystems']
+    runTestMysqlSystem = json.load(file)['mysqlSystem']
 
-@unittest.skipIf(runTestDBSystems == False, 'Skipped TestDBSystems via config')
-class TestDBSystems(unittest.TestCase):
+@unittest.skipIf(runTestMysqlSystem == False, 'Skipped TestMysqlSystem via config')
+class TestMysqlSystem(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with open('tests/mysql_testserver_login.json', 'r') as file:
