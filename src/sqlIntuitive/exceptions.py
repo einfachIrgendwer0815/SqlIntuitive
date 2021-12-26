@@ -10,6 +10,9 @@ class AdaptionProviderException(SqlIntuitiveException):
 class ConditionException(SqlIntuitiveException):
     pass
 
+class NotSupported(SqlIntuitiveException):
+    pass
+
 # ConditionExceptions
 
 class NotAComparisonType(ConditionException):
