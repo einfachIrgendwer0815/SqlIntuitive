@@ -46,6 +46,10 @@ class Features(Enum):
     # all
     ALL = GROUP_SQL | GROUP_ADDON
 
+class DatabaseSystems(Enum):
+    MySQL = 'MySqlDbSystem'
+    SqLite = 'SqliteDbSystem'
+
 def or_values(features: list):
     value = 0
     for feature in features:
@@ -94,10 +98,12 @@ def ifSupported(feature: Features):
             print(self.__class__.__name__)
 
             supported = False
-            if (name := self.__class__.__name__) == 'MySqlDbSystem':
+            name = self.__class__.__name__
+
+            if name == DatabaseSystems.MySQL.value:
                 if isSupported(feature, MYSQL_SUPPORTS):
                     supported = True
-            elif name == 'SqliteDbSystem':
+            elif name == DatabaseSystems.SqLite.value:
                 if isSupported(feature, SQLITE_SUPPORTS):
                     supported = True
 
