@@ -17,7 +17,7 @@ class BaseDbSystem():
         self.dbCon = None
         self.cursor = None
 
-    def supports(self, feature: Features):
+    def supports(self, feature: Features) -> bool:
         return isSupported(feature, self.SUPPORTS)
 
     @ifSupported(Features.ADDON_CUSTOM_DATA_TYPE)

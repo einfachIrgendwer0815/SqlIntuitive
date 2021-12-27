@@ -85,7 +85,7 @@ SQLITE_SUPPORTS = or_values([
     Features.ADDON_CUSTOM_DATA_TYPE
     ])
 
-def isSupported(feature: Features, supported: int):
+def isSupported(feature: Features, supported: int) -> bool:
     if (supported & feature.value) == feature.value:
         return True
     return False
