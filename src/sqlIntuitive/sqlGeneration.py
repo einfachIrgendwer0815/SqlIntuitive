@@ -1,10 +1,16 @@
 from sqlIntuitive import exceptions
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
+from enum import Enum, auto
 
 import string
 import re
 
 INVALID_CHARS = ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t']
+
+class Count_avg_sum_modes(Enum):
+    COUNT = auto()
+    AVG = auto()
+    SUM = auto()
 
 def check_validName(text: str) -> bool:
     for char in INVALID_CHARS:
@@ -89,7 +95,6 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], defaultCombin
 
     return text, values_ordered
 
-
 def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
@@ -107,6 +112,54 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
 
     column_values_ordered = []
 
+    if len(conditions) > 0:
+        text += ' WHERE '
+
+        conditionText, conditionValues = gen_conditions(conditions, combinations=combinations, defaultCombination=conditionCombining, defaultComparison=conditionComparison, placeholder=placeholder)
+
+        text += conditionText
+        column_values_ordered += conditionValues
+
+    text += ';'
+
+    return text, column_values_ordered
+
+def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+
+def gen_avg(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+
+def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+
+def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    if not isinstance(mode, Count_avg_sum_modes):
+        raise exceptions.InvalidType(f"{mode} is not an instance of class 'Count_avg_sum_modes'")
+
+    if check_validName(tableName) == False:
+        raise exceptions.InvalidTableNameException("Table name contains invalid characters.")
+    elif len(tableName) == 0:
+        raise exceptions.InvalidTableNameException("Table name empty.")
+
+    if not isinstance(column, str):
+        raise exceptions.InvalidType(f"{column} is not an instance of class 'str'")
+
+    if len(column) == 0:
+        column = "*"
+
+    text = "SELECT "
+
+    if mode == Count_avg_sum_modes.COUNT:
+        text += "COUNT"
+    elif mode == Count_avg_sum_modes.AVG:
+        text += "AVG"
+    elif mode == Count_avg_sum_modes.SUM:
+        text += "SUM"
+
+    text += f"({column}) FROM {tableName}"
+
+    column_values_ordered = []
     if len(conditions) > 0:
         text += ' WHERE '
 

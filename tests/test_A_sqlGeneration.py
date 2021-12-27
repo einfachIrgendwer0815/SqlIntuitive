@@ -283,3 +283,28 @@ class TestSqlGeneration(unittest.TestCase):
     def test_T_gen_select(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_select("")
+
+    def test_U_gen_count_avg_sum(self):
+        with self.assertRaises(exceptions.InvalidType):
+            sqlGeneration.gen_count_avg_sum(None, "TableA", "ColumnB")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            sqlGeneration.gen_count_avg_sum(sqlGeneration.Count_avg_sum_modes.COUNT, "", "ColumnB")
+
+        with self.assertRaises(exceptions.InvalidType):
+            sqlGeneration.gen_count_avg_sum(sqlGeneration.Count_avg_sum_modes.COUNT, "TableA", None)
+
+    def test_V_gen_count(self):
+        self.assertEqual(sqlGeneration.gen_count("TableA"), ("SELECT COUNT(*) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_count("TableA", "myColumn"), ("SELECT COUNT(myColumn) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_count("TableA", "myColumn", {"colB": 123}), ("SELECT COUNT(myColumn) FROM TableA WHERE colB=?;", [123]))
+
+    def test_W_gen_avg(self):
+        self.assertEqual(sqlGeneration.gen_avg("TableA"), ("SELECT AVG(*) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_avg("TableA", "myColumn"), ("SELECT AVG(myColumn) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_avg("TableA", "myColumn", {"colB": 123}), ("SELECT AVG(myColumn) FROM TableA WHERE colB=?;", [123]))
+
+    def test_X_gen_sum(self):
+        self.assertEqual(sqlGeneration.gen_sum("TableA"), ("SELECT SUM(*) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_sum("TableA", "myColumn"), ("SELECT SUM(myColumn) FROM TableA;", []))
+        self.assertEqual(sqlGeneration.gen_sum("TableA", "myColumn", {"colB": 123}), ("SELECT SUM(myColumn) FROM TableA WHERE colB=?;", [123]))
