@@ -1,5 +1,6 @@
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
+from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features, isSupported
 
 class BaseDbSystem():
@@ -55,31 +56,31 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_UPDATE)
-    def update(self, tableName: str, newColumnValues: dict, conditions: dict = {}, conditionCombining: str = "AND") -> None:
+    def update(self, tableName: str, newColumnValues: dict, conditions: dict = {}, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> None:
         adaptedNewColumnValues = self.adaptProvider.convertDictToString(newColumnValues)
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_update(tableName=tableName, newValues=adaptedNewColumnValues, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.gen_update(tableName=tableName, newValues=adaptedNewColumnValues, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_DELETE_FROM)
-    def delete_from(self, tableName: str, conditions: dict = {}, conditionCombining: str = "AND") -> None:
+    def delete_from(self, tableName: str, conditions: dict = {}, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> None:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_delete(tableName=tableName, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.gen_delete(tableName=tableName, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_SELECT_FROM)
-    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: str = "AND") -> list:
+    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> list:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, conditionCombining=conditionCombining, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
