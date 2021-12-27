@@ -190,3 +190,54 @@ class TestMysqlSystem(unittest.TestCase):
         res = self.mydb.select_from("TableB", conditions={'col2': 567})
 
         self.assertTrue(isinstance(res[0][0], TestClass))
+
+    def test_M_select_count(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+
+        res = self.mydb.select_count("TableB", column="col2")
+        self.assertEqual(res, 3)
+
+        res = self.mydb.select_count("TableB", column="col2", conditions={"col1": "ABC"})
+        self.assertEqual(res, 2)
+
+        res = self.mydb.select_count("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        self.assertEqual(res, 2)
+
+    def test_N_select_avg(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+
+        res = self.mydb.select_avg("TableB", column="col2")
+        self.assertEqual(res, 456)
+
+        res = self.mydb.select_avg("TableB", column="col2", conditions={"col1": "ABC"})
+        self.assertEqual(res, (123+789)/2)
+
+        res = self.mydb.select_avg("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        self.assertEqual(res, (456+789)/2)
+
+    def test_O_select_sum(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+
+        res = self.mydb.select_sum("TableB", column="col2")
+        self.assertEqual(res, 123+456+789)
+
+        res = self.mydb.select_sum("TableB", column="col2", conditions={"col1": "ABC"})
+        self.assertEqual(res, 123+789)
+
+        res = self.mydb.select_sum("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        self.assertEqual(res, 456+789)

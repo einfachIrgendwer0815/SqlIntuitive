@@ -90,3 +90,27 @@ class BaseDbSystem():
             res[index] = self.adaptProvider.convertTupleToClsInstance(res[index])
 
         return res
+
+    @ifSupported(Features.SQL_COUNT_AVG_SUM)
+    def select_count(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+
+    @ifSupported(Features.SQL_COUNT_AVG_SUM)
+    def select_avg(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+
+    @ifSupported(Features.SQL_COUNT_AVG_SUM)
+    def select_sum(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+
+    @ifSupported(Features.SQL_COUNT_AVG_SUM)
+    def _select_count_avg_sum(self, mode: sqlGeneration.Count_avg_sum_modes, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+        adaptedConditions = self.adaptProvider.convertDictToString(conditions)
+
+        sql, column_values_ordered = sqlGeneration.gen_count_avg_sum(mode=mode, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+
+        self.cursor.execute(sql, column_values_ordered)
+
+        res = self.cursor.fetchall()
+
+        return res[0][0]
