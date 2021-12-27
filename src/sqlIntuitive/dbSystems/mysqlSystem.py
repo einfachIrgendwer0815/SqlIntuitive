@@ -6,10 +6,12 @@ from time import sleep
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.dbSystems import BaseDbSystem
+from sqlIntuitive.dbSystems.supportTracker import MYSQL_SUPPORTS
 
 class MySqlDbSystem(BaseDbSystem):
     placeholder = "%s"
-    
+    SUPPORTS = MYSQL_SUPPORTS
+
     def __init__(self, host: str, database: str, username: str, password: str, adaptionProvider: AdaptionProvider = None, max_connect_retries: int = 5) -> None:
         super().__init__(database, adaptionProvider)
 

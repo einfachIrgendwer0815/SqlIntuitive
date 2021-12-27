@@ -3,10 +3,12 @@ import sqlite3
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.dbSystems import BaseDbSystem
+from sqlIntuitive.dbSystems.supportTracker import SQLITE_SUPPORTS
 
 class SqliteDbSystem(BaseDbSystem):
     placeholder="?"
-    
+    SUPPORTS = SQLITE_SUPPORTS
+
     def __init__(self, database: str, timeout: int = 5, adaptionProvider: AdaptionProvider = None):
         super().__init__(database, adaptionProvider)
 

@@ -1,9 +1,10 @@
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
-from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features
+from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features, isSupported
 
 class BaseDbSystem():
     placeholder = "%s"
+    SUPPORTS = Features.ALL.value
 
     def __init__(self, database: str, adaptionProvider: AdaptionProvider = None) -> None:
         self.database = database
@@ -15,6 +16,9 @@ class BaseDbSystem():
 
         self.dbCon = None
         self.cursor = None
+
+    def supports(self, feature: Features):
+        return isSupported(feature, self.SUPPORTS)
 
     @ifSupported(Features.ADDON_CUSTOM_DATA_TYPE)
     def addDataType(self, dataType: CustomDataType) -> None:
