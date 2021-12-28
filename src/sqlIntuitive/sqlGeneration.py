@@ -19,7 +19,7 @@ def check_validName(text: str) -> bool:
 
     return True
 
-def gen_conditions(conditions: dict = {}, combinations: list = [], defaultCombination: CombinationTypes = CombinationTypes.AND, defaultComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
+def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCombination: CombinationTypes = CombinationTypes.AND, defaultComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if type(conditions) != dict:
         raise exceptions.InvalidType(f'{type(conditions)} is not a dict')
 
@@ -95,7 +95,7 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], defaultCombin
 
     return text, values_ordered
 
-def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -124,16 +124,16 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
 
     return text, column_values_ordered
 
-def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     return gen_count_avg_sum(mode=Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_avg(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_avg(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     return gen_count_avg_sum(mode=Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     return gen_count_avg_sum(mode=Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if not isinstance(mode, Count_avg_sum_modes):
         raise exceptions.InvalidType(f"{mode} is not an instance of class 'Count_avg_sum_modes'")
 
@@ -172,7 +172,7 @@ def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, co
 
     return text, column_values_ordered
 
-def gen_insert(tablename: str, column_values: dict, placeholder: str = "?") -> tuple:
+def gen_insert(tablename: str, column_values: dict, *, placeholder: str = "?") -> tuple:
     if check_validName(tablename) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -201,7 +201,7 @@ def gen_insert(tablename: str, column_values: dict, placeholder: str = "?") -> t
 
     return text, column_values_ordered
 
-def gen_update(tableName: str, newValues: dict, conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
+def gen_update(tableName: str, newValues: dict, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -236,7 +236,7 @@ def gen_update(tableName: str, newValues: dict, conditions: dict = {}, combinati
 
     return text, column_values_ordered
 
-def gen_delete(tableName: str, conditions: dict = {}, combinations: list = [], conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
+def gen_delete(tableName: str, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -280,7 +280,7 @@ def gen_drop_db(dbName: str) -> str:
 
     return text
 
-def gen_create_table(tableName: str, columns: dict, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> str:
+def gen_create_table(tableName: str, columns: dict, *, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> str:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
