@@ -95,7 +95,7 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCom
 
     return text, values_ordered
 
-def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
 
@@ -106,6 +106,9 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
         columns = ('*')
 
     text = 'SELECT '
+    if distinct:
+        text += 'DISTINCT '
+
     text += ', '.join(columns)
 
     text += f' FROM {tableName}'
@@ -124,16 +127,16 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
 
     return text, column_values_ordered
 
-def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
-    return gen_count_avg_sum(mode=Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_avg(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
-    return gen_count_avg_sum(mode=Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+def gen_avg(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
-    return gen_count_avg_sum(mode=Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
+def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+    return gen_count_avg_sum(mode=Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
 
-def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if not isinstance(mode, Count_avg_sum_modes):
         raise exceptions.InvalidType(f"{mode} is not an instance of class 'Count_avg_sum_modes'")
 
@@ -157,7 +160,11 @@ def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, co
     elif mode == Count_avg_sum_modes.SUM:
         text += "SUM"
 
-    text += f"({column}) FROM {tableName}"
+    text += '('
+    if distinct:
+        text += 'DISTINCT '
+
+    text += f"{column}) FROM {tableName}"
 
     column_values_ordered = []
     if len(conditions) > 0:

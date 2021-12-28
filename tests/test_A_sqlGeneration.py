@@ -280,6 +280,8 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_select("TableS", conditions={"col5":"hello", "xyz": "abc"}), ('SELECT * FROM TableS WHERE col5=? AND xyz=?;', ['hello', 'abc']))
         self.assertEqual(sqlGeneration.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=?;', ['hello', 'abc']))
 
+        self.assertEqual(sqlGeneration.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=?;', ['hello']))
+
     def test_T_gen_select(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             sqlGeneration.gen_select("")
@@ -299,12 +301,18 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(sqlGeneration.gen_count("TableA", "myColumn"), ("SELECT COUNT(myColumn) FROM TableA;", []))
         self.assertEqual(sqlGeneration.gen_count("TableA", "myColumn", {"colB": 123}), ("SELECT COUNT(myColumn) FROM TableA WHERE colB=?;", [123]))
 
+        self.assertEqual(sqlGeneration.gen_count("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT COUNT(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
+
     def test_W_gen_avg(self):
         self.assertEqual(sqlGeneration.gen_avg("TableA"), ("SELECT AVG(*) FROM TableA;", []))
         self.assertEqual(sqlGeneration.gen_avg("TableA", "myColumn"), ("SELECT AVG(myColumn) FROM TableA;", []))
         self.assertEqual(sqlGeneration.gen_avg("TableA", "myColumn", {"colB": 123}), ("SELECT AVG(myColumn) FROM TableA WHERE colB=?;", [123]))
 
+        self.assertEqual(sqlGeneration.gen_avg("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT AVG(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
+
     def test_X_gen_sum(self):
         self.assertEqual(sqlGeneration.gen_sum("TableA"), ("SELECT SUM(*) FROM TableA;", []))
         self.assertEqual(sqlGeneration.gen_sum("TableA", "myColumn"), ("SELECT SUM(myColumn) FROM TableA;", []))
         self.assertEqual(sqlGeneration.gen_sum("TableA", "myColumn", {"colB": 123}), ("SELECT SUM(myColumn) FROM TableA WHERE colB=?;", [123]))
+
+        self.assertEqual(sqlGeneration.gen_sum("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT SUM(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
