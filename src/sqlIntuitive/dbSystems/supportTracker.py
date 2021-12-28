@@ -96,10 +96,7 @@ def isSupported(feature: Features, supported: int) -> bool:
 def ifSupported(feature: Features):
 
     def decorator(func):
-        print(func)
         def replaceFunc(self, *args, **kwargs):
-            print(self.__class__.__name__)
-
             supported = False
             name = self.__class__.__name__
 
