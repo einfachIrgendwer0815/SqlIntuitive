@@ -16,7 +16,7 @@ with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as fil
 
 @unittest.skipIf(runTestSqlGeneration == False, 'Skipped TestSqlGeneration via config')
 class TestSqlGeneration(unittest.TestCase):
-    def test_A_a_gen_conditions(self):
+    def test_A_A_a_gen_conditions(self):
         self.assertEqual(standard.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': ComparisonTypes.GREATER_THAN}}), ('abc=? AND xyz=? AND test>?', ['def', 123, 42]))
         self.assertEqual(standard.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': ComparisonTypes.GREATER_THAN}}, defaultComparison=ComparisonTypes.LESS_THAN_OR_EQUAL_TO), ('abc<=? AND xyz<=? AND test>?', ['def', 123, 42]))
         self.assertEqual(standard.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': ComparisonTypes.GREATER_THAN}}, defaultCombination=CombinationTypes.OR), ('abc=? OR xyz=? OR test>?', ['def', 123, 42]))
@@ -33,7 +33,7 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(standard.gen_conditions({'abc':'def', 'x':{'value': 'y', 'comparison': ">="}}), ('abc=? AND x>=?',['def','y']))
         self.assertEqual(standard.gen_conditions({'abc':'def', 'x':'y', 'hello': 'world'}, combinations=["OR", "AND"]), ('abc=? OR x=? AND hello=?',['def','y','world']))
 
-    def test_A_b_gen_conditions(self):
+    def test_A_A_b_gen_conditions(self):
         with self.assertRaises(exceptions.InvalidType):
             standard.gen_conditions(['test'])
 
@@ -58,29 +58,29 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.NoValue):
             standard.gen_conditions({'abc': {'comparison': ComparisonTypes.EQUAL_TO}})
 
-    def test_A_b_gen_insert(self):
+    def test_A_A_c_gen_insert(self):
         self.assertEqual(standard.gen_insert("TestA", {"colA":"val1", "colB": 123, "colC": True}), ("INSERT INTO TestA (colA, colB, colC) VALUES (?, ?, ?);", ['val1', 123, True]))
 
-    def test_B_gen_insert(self):
+    def test_A_B_gen_insert(self):
         with self.assertRaises(exceptions.DictionaryEmptyException):
             standard.gen_insert("TestB", {})
 
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_insert(" Test B", {"colA":"val1", "colB": 123, "colC": True})
 
-    def test_C_gen_insert(self):
+    def test_A_C_gen_insert(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_insert("", {"colA": "val1"})
 
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_insert(" ", {"colA": "val1"})
 
-    def test_D_gen_delete(self):
+    def test_A_D_gen_delete(self):
         self.assertEqual(standard.gen_delete("TestD", {"colXY": "ABC", "id": 12345}), ("DELETE FROM TestD WHERE colXY=? AND id=?;", ['ABC', 12345]))
         self.assertEqual(standard.gen_delete("TestD", {"colXY": "ABC", "id": 12345}, conditionCombining='OR'), ("DELETE FROM TestD WHERE colXY=? OR id=?;", ['ABC', 12345]))
         self.assertEqual(standard.gen_delete("TestD"), ("DELETE FROM TestD;", []))
 
-    def test_E_gen_delete(self):
+    def test_A_E_gen_delete(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_delete("")
 
@@ -114,10 +114,10 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_delete("T es tD ")
 
-    def test_F_gen_create_db(self):
+    def test_A_F_gen_create_db(self):
         self.assertTrue(standard.gen_create_db("TestF"))
 
-    def test_G_gen_create_db(self):
+    def test_A_G_gen_create_db(self):
         with self.assertRaises(exceptions.InvalidDatabaseNameException):
             standard.gen_create_db("")
 
@@ -139,7 +139,7 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidDatabaseNameException):
             standard.gen_create_db(" Tes   tF ")
 
-    def test_H_gen_create_table(self):
+    def test_A_H_gen_create_table(self):
         self.assertEqual(standard.gen_create_table("TestH", {"col1": "int"}, safeMode=False), "CREATE TABLE TestH (col1 int);")
         self.assertEqual(standard.gen_create_table("TestH", {"col1": "int"}, safeMode=True), "CREATE TABLE IF NOT EXISTS TestH (col1 int);")
         self.assertEqual(standard.gen_create_table("TestH", {"col1": "int"}), "CREATE TABLE IF NOT EXISTS TestH (col1 int);")
@@ -159,7 +159,7 @@ class TestSqlGeneration(unittest.TestCase):
 
         self.assertEqual(standard.gen_create_table("TestH", {"col1": "varchar(10)"}, namedForeignKeys={"col1": {"name": "TestFK", "reference": "TableXY(abc)"}}), "CREATE TABLE IF NOT EXISTS TestH (col1 varchar(10), CONSTRAINT TestFK FOREIGN KEY (col1) REFERENCES TableXY(abc));")
 
-    def test_I_gen_create_table(self):
+    def test_A_I_gen_create_table(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_create_table("", {"id": "int"})
 
@@ -205,10 +205,10 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidNamedForeignKeyDictionary):
             standard.gen_create_table("Test", {"col1": "int"}, namedForeignKeys={"col1": {'reference': 'anotherTable(aColumn)'}})
 
-    def test_J_INVALID_CHARS(self):
+    def test_A_J_INVALID_CHARS(self):
         self.assertEqual(standard.INVALID_CHARS, ['!', '"', '#', r'\$', '%', '&', "'", r'\(', r'\)', r'\*', r'\+', ',', '-', '/', ':', ';', '<', '=', '>', r'\?', '@', r'\[', r'\\', r'\]', r'\^', '_', '`', r'\{', r'\|', r'\}', '~', ' ', '\n', '\t'])
 
-    def test_K_check_validName(self):
+    def test_A_K_check_validName(self):
         chars = string.ascii_letters + string.digits
 
         for i in range(10):
@@ -221,7 +221,7 @@ class TestSqlGeneration(unittest.TestCase):
 
                 self.assertFalse(standard.check_validName(text))
 
-    def test_L_check_validName(self):
+    def test_A_L_check_validName(self):
         chars = string.ascii_letters + string.digits
 
         for _ in range(50):
@@ -229,7 +229,7 @@ class TestSqlGeneration(unittest.TestCase):
 
             self.assertTrue(standard.check_validName(text))
 
-    def test_M_gen_update(self):
+    def test_A_M_gen_update(self):
         self.assertEqual(standard.gen_update("TableA", {"col1": "val1"}), ("UPDATE TableA SET col1=?;", ['val1']))
         self.assertEqual(standard.gen_update("TableA", {"col1": True}), ("UPDATE TableA SET col1=?;", [True]))
         self.assertEqual(standard.gen_update("TableA", {"col1": 42}), ("UPDATE TableA SET col1=?;", [42]))
@@ -249,7 +249,7 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(standard.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}, conditionCombining="OR"), ("UPDATE TableA SET col1=? WHERE col5=? OR colB=?;", [42, 42, 'welt']))
         self.assertEqual(standard.gen_update("TableA", {"col1": 42}, {'col5': 42, "colB": "welt"}), ("UPDATE TableA SET col1=? WHERE col5=? AND colB=?;", [42, 42, 'welt']))
 
-    def test_N_gen_update(self):
+    def test_A_N_gen_update(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_update("T abl e", {"col1": "val1"})
 
@@ -259,21 +259,21 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.DictionaryEmptyException):
             standard.gen_update("TableXY", {})
 
-    def test_O_gen_drop_db(self):
+    def test_A_O_gen_drop_db(self):
         self.assertEqual(standard.gen_drop_db("DbA"), 'DROP DATABASE DbA;')
 
-    def test_P_gen_drop_db(self):
+    def test_A_P_gen_drop_db(self):
         with self.assertRaises(exceptions.InvalidDatabaseNameException):
             standard.gen_drop_db("")
 
-    def test_Q_gen_drop_table(self):
+    def test_A_Q_gen_drop_table(self):
         self.assertEqual(standard.gen_drop_table("TableA"), 'DROP TABLE TableA;')
 
-    def test_R_gen_drop_table(self):
+    def test_A_R_gen_drop_table(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_drop_table("")
 
-    def test_S_gen_select(self):
+    def test_A_S_gen_select(self):
         self.assertEqual(standard.gen_select("TableS"), ('SELECT * FROM TableS;', []))
         self.assertEqual(standard.gen_select("TableS", ["col1", "xyz"]), ('SELECT col1, xyz FROM TableS;', []))
         self.assertEqual(standard.gen_select("TableS", ["xyz"]), ('SELECT xyz FROM TableS;', []))
@@ -284,11 +284,11 @@ class TestSqlGeneration(unittest.TestCase):
 
         self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=?;', ['hello']))
 
-    def test_T_gen_select(self):
+    def test_A_T_gen_select(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_select("")
 
-    def test_U_gen_count_avg_sum(self):
+    def test_A_U_gen_count_avg_sum(self):
         with self.assertRaises(exceptions.InvalidType):
             standard.gen_count_avg_sum(None, "TableA", "ColumnB")
 
@@ -298,21 +298,21 @@ class TestSqlGeneration(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidType):
             standard.gen_count_avg_sum(standard.Count_avg_sum_modes.COUNT, "TableA", None)
 
-    def test_V_gen_count(self):
+    def test_A_V_gen_count(self):
         self.assertEqual(standard.gen_count("TableA"), ("SELECT COUNT(*) FROM TableA;", []))
         self.assertEqual(standard.gen_count("TableA", "myColumn"), ("SELECT COUNT(myColumn) FROM TableA;", []))
         self.assertEqual(standard.gen_count("TableA", "myColumn", {"colB": 123}), ("SELECT COUNT(myColumn) FROM TableA WHERE colB=?;", [123]))
 
         self.assertEqual(standard.gen_count("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT COUNT(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
 
-    def test_W_gen_avg(self):
+    def test_A_W_gen_avg(self):
         self.assertEqual(standard.gen_avg("TableA"), ("SELECT AVG(*) FROM TableA;", []))
         self.assertEqual(standard.gen_avg("TableA", "myColumn"), ("SELECT AVG(myColumn) FROM TableA;", []))
         self.assertEqual(standard.gen_avg("TableA", "myColumn", {"colB": 123}), ("SELECT AVG(myColumn) FROM TableA WHERE colB=?;", [123]))
 
         self.assertEqual(standard.gen_avg("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT AVG(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
 
-    def test_X_gen_sum(self):
+    def test_A_X_gen_sum(self):
         self.assertEqual(standard.gen_sum("TableA"), ("SELECT SUM(*) FROM TableA;", []))
         self.assertEqual(standard.gen_sum("TableA", "myColumn"), ("SELECT SUM(myColumn) FROM TableA;", []))
         self.assertEqual(standard.gen_sum("TableA", "myColumn", {"colB": 123}), ("SELECT SUM(myColumn) FROM TableA WHERE colB=?;", [123]))
