@@ -7,6 +7,7 @@
 
 ## Breaking change
 - made a variety of parameters keyword-only wich concerns the modules sqlGeneration and dbSystems
+- moved sqlGeneration.py to sqlGeneration/standard: only db systems and sqlGeneration are concerned
 
 
 # 0.6.0
