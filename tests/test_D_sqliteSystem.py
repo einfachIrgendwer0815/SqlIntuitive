@@ -95,10 +95,22 @@ class TestSqliteSystem(unittest.TestCase):
         self.file_db.update("TableA", {"col3": False, "col2": 44}, {"col2": {'value': 43, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
 
     def test_I_select_from(self):
-        self.file_db.create_cursor()
+        self.memory_db.create_cursor()
 
-        self.file_db.select_from("TableA")
-        self.file_db.select_from("TableA", conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
+        self.memory_db.create_table("TableA", {'col1': 'string', 'col2': 'int'})
+        self.memory_db.insert_into("TableA", {'col1': 'ABC', 'col2': 123})
+        self.memory_db.insert_into("TableA", {'col1': 'DEF', 'col2': 456})
+        self.memory_db.insert_into("TableA", {'col1': 'ABC', 'col2': 789})
+        self.memory_db.insert_into("TableA", {'col1': 'GHI', 'col2': 123})
+
+        res = self.memory_db.select_from("TableA")
+        self.assertEqual(res, [('ABC',123), ('DEF',456), ('ABC',789),('GHI',123)])
+
+        res = self.memory_db.select_from("TableA", conditions={'col2': {'value':456, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
+        self.assertEqual(res, [('ABC',123),('DEF',456), ('GHI',123)])
+
+        res = self.memory_db.select_from("TableA", ['col2'], distinct=True)
+        self.assertEqual(res, [(123,),(456,),(789,)])
 
     def test_J_delete(self):
         self.file_db.create_cursor()
@@ -160,6 +172,13 @@ class TestSqliteSystem(unittest.TestCase):
         res = self.memory_db.select_count("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
         self.assertEqual(res, 2)
 
+
+        res = self.memory_db.select_count("TableB", column="col1")
+        self.assertEqual(res,3)
+
+        res = self.memory_db.select_count("TableB", column="col1", distinct=True)
+        self.assertEqual(res,2)
+
     def test_N_select_avg(self):
         self.memory_db.create_cursor()
 
@@ -177,6 +196,15 @@ class TestSqliteSystem(unittest.TestCase):
         res = self.memory_db.select_avg("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
         self.assertEqual(res, (456+789)/2)
 
+
+        self.memory_db.insert_into("TableB", {"col1": "GHI", "col2": 123})
+
+        res = self.memory_db.select_avg("TableB", column="col2")
+        self.assertEqual(res, (123+456+789+123)/4)
+
+        res = self.memory_db.select_avg("TableB", column="col2", distinct=True)
+        self.assertEqual(res, (123+456+789)/3)
+
     def test_O_select_sum(self):
         self.memory_db.create_cursor()
 
@@ -193,3 +221,12 @@ class TestSqliteSystem(unittest.TestCase):
 
         res = self.memory_db.select_sum("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
         self.assertEqual(res, 456+789)
+
+
+        self.memory_db.insert_into("TableB", {"col1": "GHI", "col2": 123})
+
+        res = self.memory_db.select_sum("TableB", column="col2")
+        self.assertEqual(res, 123+456+789+123)
+
+        res = self.memory_db.select_sum("TableB", column="col2", distinct=True)
+        self.assertEqual(res, 123+456+789)

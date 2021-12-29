@@ -31,7 +31,7 @@ class TestMysqlSystem(unittest.TestCase):
         if mydb.dbCon.is_connected():
             cursor = mydb.dbCon.cursor()
 
-            cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint);")
+            cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint, col4 int);")
         else:
             raise Exception()
 
@@ -128,7 +128,13 @@ class TestMysqlSystem(unittest.TestCase):
         self.assertIsNotNone(self.mydb.cursor)
 
         self.mydb.select_from("TableB")
-        self.mydb.select_from("TableB", conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
+        self.mydb.cursor.execute("INSERT INTO TableB (col1,col2) VALUES ('A',10),('B',20),('A',30);")
+
+        res = self.mydb.select_from("TableB", ['col1'], conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
+        self.assertEqual(len(res), 3)
+
+        res = self.mydb.select_from("TableB", ['col1'], conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}}, distinct=True)
+        self.assertEqual(len(res), 2)
 
     def test_I_delete(self):
         self.assertTrue(self.mydb.connect_to_db())
@@ -195,49 +201,74 @@ class TestMysqlSystem(unittest.TestCase):
         self.mydb.connect_to_db()
         self.mydb.create_cursor()
 
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
-        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 1, 'col4': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 2, 'col4': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 3, 'col4': 789})
 
-        res = self.mydb.select_count("TableB", column="col2")
+        res = self.mydb.select_count("TableB", column="col4")
         self.assertEqual(res, 3)
 
-        res = self.mydb.select_count("TableB", column="col2", conditions={"col1": "ABC"})
+        res = self.mydb.select_count("TableB", column="col4", conditions={"col1": "ABC"})
         self.assertEqual(res, 2)
 
-        res = self.mydb.select_count("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        res = self.mydb.select_count("TableB", column="col4", conditions={"col4": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        self.assertEqual(res, 2)
+
+
+        res = self.mydb.select_count("TableB", column="col1")
+        self.assertEqual(res, 3)
+
+        res = self.mydb.select_count("TableB", column="col1", distinct=True)
         self.assertEqual(res, 2)
 
     def test_N_select_avg(self):
         self.mydb.connect_to_db()
         self.mydb.create_cursor()
 
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
-        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 1, 'col4': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 2, 'col4': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 3, 'col4': 789})
 
-        res = self.mydb.select_avg("TableB", column="col2")
+        res = self.mydb.select_avg("TableB", column="col4")
         self.assertEqual(res, 456)
 
-        res = self.mydb.select_avg("TableB", column="col2", conditions={"col1": "ABC"})
+        res = self.mydb.select_avg("TableB", column="col4", conditions={"col1": "ABC"})
         self.assertEqual(res, (123+789)/2)
 
-        res = self.mydb.select_avg("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        res = self.mydb.select_avg("TableB", column="col4", conditions={"col4": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
         self.assertEqual(res, (456+789)/2)
+
+
+        self.mydb.insert_into("TableB", {'col1': "GHI", 'col2': 4, 'col4': 123})
+
+        res = self.mydb.select_avg("TableB", column="col4")
+        self.assertEqual(res, (123+456+789+123)/4)
+
+        res = self.mydb.select_avg("TableB", column="col4", distinct=True)
+        self.assertEqual(res, (123+456+789)/3)
 
     def test_O_select_sum(self):
         self.mydb.connect_to_db()
         self.mydb.create_cursor()
 
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 123})
-        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 456})
-        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 789})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 1, 'col4': 123})
+        self.mydb.insert_into("TableB", {'col1': "DEF", 'col2': 2, 'col4': 456})
+        self.mydb.insert_into("TableB", {'col1': "ABC", 'col2': 3, 'col4': 789})
 
-        res = self.mydb.select_sum("TableB", column="col2")
+        res = self.mydb.select_sum("TableB", column="col4")
         self.assertEqual(res, 123+456+789)
 
-        res = self.mydb.select_sum("TableB", column="col2", conditions={"col1": "ABC"})
+        res = self.mydb.select_sum("TableB", column="col4", conditions={"col1": "ABC"})
         self.assertEqual(res, 123+789)
 
-        res = self.mydb.select_sum("TableB", column="col2", conditions={"col2": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
+        res = self.mydb.select_sum("TableB", column="col4", conditions={"col4": {"value": 123, "comparison": ComparisonTypes.GREATER_THAN}})
         self.assertEqual(res, 456+789)
+
+
+        self.mydb.insert_into("TableB", {'col1': "GHI", 'col2': 4, 'col4': 123})
+
+        res = self.mydb.select_sum("TableB", column="col4")
+        self.assertEqual(res, 123+456+789+123)
+
+        res = self.mydb.select_sum("TableB", column="col4", distinct=True)
+        self.assertEqual(res, 123+456+789)
