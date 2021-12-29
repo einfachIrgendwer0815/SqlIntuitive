@@ -372,3 +372,56 @@ def gen_drop_table(tableName: str) -> str:
     text = f'DROP TABLE {tableName};'
 
     return text
+
+def gen_create_stored_procedure(procedureName: str, sql_statement: str, parameters: dict = {}) -> str:
+    if not isinstance(procedureName, str):
+        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+
+    if not isinstance(sql_statement, str):
+        raise exceptions.InvalidType(f"'{sql_statement}' is not an instance of 'str'")
+
+    if not isinstance(parameters, dict):
+        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'dict'")
+    else:
+        for parameter in parameters:
+            if not isinstance(parameter, str) or not isinstance(parameters[parameter], str):
+                raise exceptions.InvalidType(f"Dictionary of parameters key and value must be strings")
+
+    text = f"CREATE PROCEDURE {procedureName}"
+
+    if len(parameters) > 0:
+        text += ' ' + ', '.join([f'@{key} {parameters[key]}' for key in parameters])
+
+    text += f"\nAS\n{sql_statement}\nGO;"
+
+    return text
+
+def gen_exec_procedure(procedureName: str, parameters: dict = {}, placeholder: str = '?') -> tuple:
+    if not isinstance(procedureName, str):
+        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+
+    if not isinstance(parameters, dict):
+        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'dict'")
+
+    text = f"EXEC {procedureName}"
+
+    values_ordered = []
+    if len(parameters) > 0:
+        text += ' '
+
+        paramList = []
+        for key in parameters:
+            paramList.append(f'@{key}=?')
+            values_ordered.append(parameters[key])
+
+        text += ', '.join(paramList)
+
+    text += ";"
+
+    return text, values_ordered
+
+def gen_drop_procedure(procedureName: str) -> str:
+    if not isinstance(procedureName, str):
+        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+
+    return f"DROP PROCEDURE {procedureName};"

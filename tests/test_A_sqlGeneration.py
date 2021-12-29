@@ -318,3 +318,16 @@ class TestSqlGeneration(unittest.TestCase):
         self.assertEqual(standard.gen_sum("TableA", "myColumn", {"colB": 123}), ("SELECT SUM(myColumn) FROM TableA WHERE colB=?;", [123]))
 
         self.assertEqual(standard.gen_sum("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT SUM(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
+
+    def test_A_Y_gen_create_stored_procedure(self):
+        self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;"), "CREATE PROCEDURE Test\nAS\nSELECT * FROM TableA;\nGO;")
+        self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {'param': 'varchar(10)'}), "CREATE PROCEDURE Test @param varchar(10)\nAS\nSELECT * FROM TableA;\nGO;")
+        self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {'param': 'varchar(10)', 'param2': 'varchar(20)'}), "CREATE PROCEDURE Test @param varchar(10), @param2 varchar(20)\nAS\nSELECT * FROM TableA;\nGO;")
+
+    def test_A_Z_gen_exec_procedure(self):
+        self.assertEqual(standard.gen_exec_procedure("Test"), ("EXEC Test;", []))
+        self.assertEqual(standard.gen_exec_procedure("Test", {'param': 'val1'}), ("EXEC Test @param=?;", ['val1']))
+        self.assertEqual(standard.gen_exec_procedure("Test", {'param': 'val1', 'param2': 'val2'}), ("EXEC Test @param=?, @param2=?;", ['val1', 'val2']))
+
+    def test_B_A_gen_drop_procedure(self):
+        self.assertEqual(standard.gen_drop_procedure("Test"), "DROP PROCEDURE Test;")
