@@ -47,46 +47,12 @@ class Features(Enum):
     # all
     ALL = GROUP_SQL | GROUP_ADDON
 
-class DatabaseSystems(Enum):
-    MySQL = 'MySqlDbSystem'
-    SqLite = 'SqliteDbSystem'
-
 def or_values(features: list):
     value = 0
     for feature in features:
         value = value | feature.value
 
     return value
-
-MYSQL_SUPPORTS = or_values([
-    Features.SQL_CREATE_TABLE,
-    Features.SQL_DROP_TABLE,
-    Features.SQL_INSERT_INTO,
-    Features.SQL_UPDATE,
-    Features.SQL_DELETE_FROM,
-    Features.SQL_SELECT_FROM,
-    Features.SQL_COUNT_AVG_SUM,
-    Features.SQL_PRIMARY_KEYS,
-    Features.SQL_FOREIGN_KEYS,
-    Features.SQL_FOREIGN_KEYS_CUSTOM_CONSTRAINT,
-    Features.SQL_UNIQUE,
-    Features.ADDON_CUSTOM_DATA_TYPE
-    ])
-
-SQLITE_SUPPORTS = or_values([
-    Features.SQL_CREATE_TABLE,
-    Features.SQL_DROP_TABLE,
-    Features.SQL_INSERT_INTO,
-    Features.SQL_UPDATE,
-    Features.SQL_DELETE_FROM,
-    Features.SQL_SELECT_FROM,
-    Features.SQL_COUNT_AVG_SUM,
-    Features.SQL_PRIMARY_KEYS,
-    Features.SQL_FOREIGN_KEYS,
-    Features.SQL_FOREIGN_KEYS_CUSTOM_CONSTRAINT,
-    Features.SQL_UNIQUE,
-    Features.ADDON_CUSTOM_DATA_TYPE
-    ])
 
 def isSupported(feature: Features, supported: int) -> bool:
     if (supported & feature.value) == feature.value:
@@ -99,19 +65,16 @@ def ifSupported(feature: Features):
         def replaceFunc(self, *args, **kwargs):
             supported = False
             name = self.__class__.__name__
+            supports = self.__class__.SUPPORTS
 
-            if name == DatabaseSystems.MySQL.value:
-                if isSupported(feature, MYSQL_SUPPORTS):
-                    supported = True
-            elif name == DatabaseSystems.SqLite.value:
-                if isSupported(feature, SQLITE_SUPPORTS):
-                    supported = True
+            if isSupported(feature, supports):
+                supported = True
 
             if supported:
                 return func(self, *args, **kwargs)
             else:
                 if EXCEPTION_IF_NOT_SUPPORTED:
-                    raise NotSupported(f'{feature.name} is not supported in {self.__class__.__name__}')
+                    raise NotSupported(f'{feature.name} is not supported in {name}')
                 else:
                     return None
 

@@ -6,11 +6,24 @@ from time import sleep
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.dbSystems import BaseDbSystem
-from sqlIntuitive.dbSystems.supportTracker import MYSQL_SUPPORTS
+from sqlIntuitive.dbSystems.supportTracker import or_values, Features
 
 class MySqlDbSystem(BaseDbSystem):
     placeholder = "%s"
-    SUPPORTS = MYSQL_SUPPORTS
+    SUPPORTS = or_values([
+        Features.SQL_CREATE_TABLE,
+        Features.SQL_DROP_TABLE,
+        Features.SQL_INSERT_INTO,
+        Features.SQL_UPDATE,
+        Features.SQL_DELETE_FROM,
+        Features.SQL_SELECT_FROM,
+        Features.SQL_COUNT_AVG_SUM,
+        Features.SQL_PRIMARY_KEYS,
+        Features.SQL_FOREIGN_KEYS,
+        Features.SQL_FOREIGN_KEYS_CUSTOM_CONSTRAINT,
+        Features.SQL_UNIQUE,
+        Features.ADDON_CUSTOM_DATA_TYPE
+        ])
 
     def __init__(self, host: str, database: str, username: str, password: str, adaptionProvider: AdaptionProvider = None, max_connect_retries: int = 5) -> None:
         super().__init__(database, adaptionProvider)
