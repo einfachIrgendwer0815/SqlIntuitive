@@ -31,7 +31,7 @@ class BaseDbSystem():
 
     @ifSupported(Features.SQL_CREATE_TABLE)
     def create_table(self, tableName: str, columns: dict, *, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> None:
-        sql = sqlGeneration.gen_create_table(tableName, columns, primaryKeys=primaryKeys, foreignKeys=foreignKeys, namedForeignKeys=namedForeignKeys, uniqueColumns=uniqueColumns, safeMode=safeMode)
+        sql = sqlGeneration.standard.gen_create_table(tableName, columns, primaryKeys=primaryKeys, foreignKeys=foreignKeys, namedForeignKeys=namedForeignKeys, uniqueColumns=uniqueColumns, safeMode=safeMode)
 
         self.cursor.execute(sql)
 
@@ -39,7 +39,7 @@ class BaseDbSystem():
 
     @ifSupported(Features.SQL_DROP_TABLE)
     def drop_table(self, tableName: str) -> None:
-        sql = sqlGeneration.gen_drop_table(tableName)
+        sql = sqlGeneration.standard.gen_drop_table(tableName)
 
         self.cursor.execute(sql)
 
@@ -49,7 +49,7 @@ class BaseDbSystem():
     def insert_into(self, tableName: str, column_values: dict) -> None:
         adaptedColumnValues = self.adaptProvider.convertDictToString(column_values)
 
-        sql, column_values_ordered = sqlGeneration.gen_insert(tableName, adaptedColumnValues, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_insert(tableName, adaptedColumnValues, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -60,7 +60,7 @@ class BaseDbSystem():
         adaptedNewColumnValues = self.adaptProvider.convertDictToString(newColumnValues)
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_update(tableName=tableName, newValues=adaptedNewColumnValues, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_update(tableName=tableName, newValues=adaptedNewColumnValues, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -70,7 +70,7 @@ class BaseDbSystem():
     def delete_from(self, tableName: str, conditions: dict = {}, *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> None:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_delete(tableName=tableName, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_delete(tableName=tableName, conditions=adaptedConditions, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -80,7 +80,7 @@ class BaseDbSystem():
     def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> list:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, distinct=distinct, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, distinct=distinct, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
@@ -93,21 +93,21 @@ class BaseDbSystem():
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
     def select_count(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
-        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+        return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
     def select_avg(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
-        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+        return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
     def select_sum(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
-        return self._select_count_avg_sum(mode=sqlGeneration.Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
+        return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
-    def _select_count_avg_sum(self, mode: sqlGeneration.Count_avg_sum_modes, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+    def _select_count_avg_sum(self, mode: sqlGeneration.standard.Count_avg_sum_modes, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.gen_count_avg_sum(mode=mode, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_count_avg_sum(mode=mode, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
