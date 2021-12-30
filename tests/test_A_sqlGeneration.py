@@ -319,15 +319,42 @@ class TestSqlGeneration(unittest.TestCase):
 
         self.assertEqual(standard.gen_sum("TableA", "myColumn", {"colB": 123}, distinct=True), ("SELECT SUM(DISTINCT myColumn) FROM TableA WHERE colB=?;", [123]))
 
-    def test_A_Y_gen_create_stored_procedure(self):
+    def test_A_Y_a_gen_create_stored_procedure(self):
         self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;"), "CREATE PROCEDURE Test\nAS\nSELECT * FROM TableA;\nGO;")
         self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {'param': 'varchar(10)'}), "CREATE PROCEDURE Test @param varchar(10)\nAS\nSELECT * FROM TableA;\nGO;")
         self.assertEqual(standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {'param': 'varchar(10)', 'param2': 'varchar(20)'}), "CREATE PROCEDURE Test @param varchar(10), @param2 varchar(20)\nAS\nSELECT * FROM TableA;\nGO;")
 
-    def test_A_Z_gen_exec_procedure(self):
+    def test_A_Y_b_gen_create_stored_procedure(self):
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_create_stored_procedure(123, "SELECT * FROM TableA;")
+
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_create_stored_procedure("Test", 456)
+
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", ['abc','def'])
+
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {123:'456'})
+
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_create_stored_procedure("Test", "SELECT * FROM TableA;", {'123':456})
+
+    def test_A_Z_a_gen_exec_procedure(self):
         self.assertEqual(standard.gen_exec_procedure("Test"), ("EXEC Test;", []))
         self.assertEqual(standard.gen_exec_procedure("Test", {'param': 'val1'}), ("EXEC Test @param=?;", ['val1']))
         self.assertEqual(standard.gen_exec_procedure("Test", {'param': 'val1', 'param2': 'val2'}), ("EXEC Test @param=?, @param2=?;", ['val1', 'val2']))
 
-    def test_B_A_gen_drop_procedure(self):
+    def test_A_Z_b_gen_exec_procedure(self):
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_exec_procedure(123)
+
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_exec_procedure("Test", ['abc','def'])
+
+    def test_B_A_b_gen_drop_procedure(self):
         self.assertEqual(standard.gen_drop_procedure("Test"), "DROP PROCEDURE Test;")
+
+    def test_B_A_b_gen_drop_procedure(self):
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_drop_procedure(123)
