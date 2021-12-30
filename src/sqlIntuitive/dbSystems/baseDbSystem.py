@@ -92,15 +92,15 @@ class BaseDbSystem():
         return res
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
-    def select_count(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+    def select_count(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> int:
         return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
-    def select_avg(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+    def select_avg(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> float:
         return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.AVG, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
-    def select_sum(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
+    def select_sum(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> float:
         return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
@@ -114,3 +114,29 @@ class BaseDbSystem():
         res = self.cursor.fetchall()
 
         return res[0][0]
+
+    @ifSupported(Features.SQL_STORED_PROCEDURES)
+    def create_procedure(self, procedureName: str, sql_statement: str, parameters: dict = {}) -> None:
+        adaptedParameters = self.adaptionProvider.convertDictToString(parameters)
+
+        sql = sqlGeneration.standard.gen_create_stored_procedure(procedureName=procedureName, sql_statement=sql_statement, parameters=adaptedParameters, placeholder=self.placeholder)
+
+        self.cursor.execute(sql)
+
+    @ifSupported(Features.SQL_STORED_PROCEDURES)
+    def exec_procedure(self,  procedureName: str, parameters: dict = {}) -> list:
+        adaptedParameters = self.adaptionProvider.convertDictToString(parameters)
+
+        sql, values_ordered = sqlGeneration.standard.gen_exec_procedure(procedureName=procedureName, parameters=adaptedParameters, placeholder=self.placeholder)
+
+        self.cursor.execute(sql, values_ordered)
+
+        res = self.cursor.fetchall()
+
+        return res
+
+    @ifSupported(Features.SQL_STORED_PROCEDURES)
+    def drop_procedure(self, procedureName: str) -> None:
+        sql = sqlGeneration.standard.gen_drop_procedure(procedureName)
+
+        self.cursor.execute(sql)
