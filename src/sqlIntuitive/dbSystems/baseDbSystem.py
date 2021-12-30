@@ -107,7 +107,7 @@ class BaseDbSystem():
     def _select_count_avg_sum(self, mode: sqlGeneration.standard.Count_avg_sum_modes, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.standard.gen_count_avg_sum(mode=mode, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_count_avg_sum(mode=mode, tableName=tableName, column=column, conditions=adaptedConditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
