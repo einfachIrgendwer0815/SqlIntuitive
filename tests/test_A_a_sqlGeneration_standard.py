@@ -12,10 +12,10 @@ defaultFile = 'tests/testsToRun.json'
 altFile = 'tests/testsToRunDefault.json'
 
 with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as file:
-    runTestSqlGeneration = json.load(file)['sqlGeneration']
+    runTestSqlGenerationStandard = json.load(file)['sqlGeneration_standard']
 
-@unittest.skipIf(runTestSqlGeneration == False, 'Skipped TestSqlGeneration via config')
-class TestSqlGeneration(unittest.TestCase):
+@unittest.skipIf(runTestSqlGenerationStandard == False, 'Skipped TestSqlGenerationStandard via config')
+class TestSqlGenerationStandard(unittest.TestCase):
     def test_A_A_a_gen_conditions(self):
         self.assertEqual(standard.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': ComparisonTypes.GREATER_THAN}}), ('abc=? AND xyz=? AND test>?', ['def', 123, 42]))
         self.assertEqual(standard.gen_conditions({'abc': 'def', 'xyz': {'value': 123}, 'test': {'value': 42, 'comparison': ComparisonTypes.GREATER_THAN}}, defaultComparison=ComparisonTypes.LESS_THAN_OR_EQUAL_TO), ('abc<=? AND xyz<=? AND test>?', ['def', 123, 42]))
