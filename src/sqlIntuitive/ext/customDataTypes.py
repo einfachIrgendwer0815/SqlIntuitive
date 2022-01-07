@@ -63,7 +63,7 @@ class AdaptionProvider():
     def addDataType(self, dataType: CustomDataType) -> None:
         if isinstance(dataType, CustomDataType):
             if dataType.name in self.types.keys() or dataType.cls in self.clss.keys():
-                raise exceptions.DuplicationError(f"{dataType.name} ({dataType.cls}) are already registered.")
+                raise exceptions.DuplicationError(dataType.name, dataType.cls)
 
             self.types[dataType.name] = dataType
             self.clss[dataType.cls] = dataType.name

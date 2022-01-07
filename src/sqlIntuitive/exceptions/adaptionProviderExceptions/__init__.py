@@ -1,12 +1,2 @@
-from sqlIntuitive.exceptions.baseException import SqlIntuitiveException
-
-class AdaptionProviderException(SqlIntuitiveException):
-    pass
-
-# AdaptionProviderExceptions
-
-class DuplicationError(AdaptionProviderException):
-    pass
-
-class DeletingTypeNotAllowed(AdaptionProviderException):
-    pass
+from sqlIntuitive.exceptions.adaptionProviderExceptions.baseException import AdaptionProviderException
+from sqlIntuitive.exceptions.adaptionProviderExceptions.subexceptions import *

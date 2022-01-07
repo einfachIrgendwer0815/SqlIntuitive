@@ -1,2 +1,3 @@
 class SqlIntuitiveException(Exception):
-    pass
+    def __str__(self):
+        return "An overall exception was raised inside the modul 'sqlIntuitive'."
