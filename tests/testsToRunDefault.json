@@ -4,5 +4,6 @@
   "mysqlSystem": true,
   "customDataTypes": true,
   "sqliteSystem": true,
-  "supportTracker": true
+  "supportTracker": true,
+  "exceptions": true
 }
