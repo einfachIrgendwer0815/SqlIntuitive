@@ -299,22 +299,22 @@ def gen_create_table(tableName: str, columns: dict, *, primaryKeys: list = [], f
 
     for primary in primaryKeys:
         if primary not in columns.keys():
-            raise exceptions.InvalidPrimaryKeyColumn(f'{primary} not in columns.')
+            raise exceptions.InvalidPrimaryKeyColumn(primary)
 
     for foreign in foreignKeys.keys():
         if foreign not in columns.keys():
-            raise exceptions.InvalidForeignKeyColumn(f'{foreign} not in columns')
+            raise exceptions.InvalidForeignKeyColumn(foreign)
 
     for unique in uniqueColumns:
         if unique not in columns.keys():
-            raise exceptions.InvalidUniqueColumn(f'{unique} not in columns')
+            raise exceptions.InvalidUniqueColumn(unique)
 
     for named in namedForeignKeys.keys():
         if named not in columns.keys():
-            raise exceptions.InvalidForeignKeyColumn(f'{named} not in columns')
+            raise exceptions.InvalidForeignKeyColumn(named)
 
         if type(namedForeignKeys[named]) != dict or 'name' not in namedForeignKeys[named].keys() or 'reference' not in namedForeignKeys[named].keys():
-            raise exceptions.InvalidNamedForeignKeyDictionary(f'Values for column {named} are not defined')
+            raise exceptions.InvalidNamedForeignKeyDictionary(named)
 
     text = 'CREATE TABLE '
     if safeMode:

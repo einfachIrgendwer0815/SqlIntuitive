@@ -22,6 +22,9 @@ class TestExceptions(unittest.TestCase):
         with self.assertRaisesRegex(exceptions.ConditionException, 'An overall \'Condition exception\' was raised processing a condition.'):
             raise exceptions.ConditionException()
 
+        with self.assertRaisesRegex(exceptions.InvalidConstraint, 'An overall \'Invalid constraint\' parameter exception was raised.'):
+            raise exceptions.InvalidConstraint()
+
     def test_B_adaptionProviderExceptions(self):
         with self.assertRaisesRegex(exceptions.DuplicationError, '.* (.*) are already registered'):
             raise exceptions.DuplicationError("TEST", 123)
@@ -38,3 +41,16 @@ class TestExceptions(unittest.TestCase):
 
         with self.assertRaisesRegex(exceptions.NoValue, r'No value for .*\.'):
             raise exceptions.NoValue("abc")
+
+    def test_E_invalidConstraints(self):
+        with self.assertRaisesRegex(exceptions.InvalidPrimaryKeyColumn, r'.* not in columns\.'):
+            raise exceptions.InvalidPrimaryKeyColumn("abc")
+
+        with self.assertRaisesRegex(exceptions.InvalidForeignKeyColumn, r'.* not in columns\.'):
+            raise exceptions.InvalidForeignKeyColumn("abc")
+
+        with self.assertRaisesRegex(exceptions.InvalidUniqueColumn, r'.* not in columns\.'):
+            raise exceptions.InvalidUniqueColumn("abc")
+
+        with self.assertRaisesRegex(exceptions.InvalidNamedForeignKeyDictionary, r'Values for column .* are not defined\.'):
+            raise exceptions.InvalidNamedForeignKeyDictionary("abc")
