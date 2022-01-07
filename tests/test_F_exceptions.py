@@ -22,8 +22,17 @@ class TestExceptions(unittest.TestCase):
         with self.assertRaisesRegex(exceptions.ConditionException, 'An overall \'Condition exception\' was raised processing a condition.'):
             raise exceptions.ConditionException()
 
+        with self.assertRaisesRegex(exceptions.ParameterException, 'An overall \'Parameter exception\' was raised.'):
+            raise exceptions.ParameterException()
+
         with self.assertRaisesRegex(exceptions.InvalidConstraint, 'An overall \'Invalid constraint\' parameter exception was raised.'):
             raise exceptions.InvalidConstraint()
+
+        with self.assertRaisesRegex(exceptions.InvalidTableNameException, 'Name for table contains invalid characters or is empty.'):
+            raise exceptions.InvalidTableNameException()
+
+        with self.assertRaisesRegex(exceptions.InvalidDatabaseNameException, 'Name for database contains invalid characters or is empty.'):
+            raise exceptions.InvalidDatabaseNameException()
 
     def test_B_adaptionProviderExceptions(self):
         with self.assertRaisesRegex(exceptions.DuplicationError, '.* (.*) are already registered'):
@@ -42,6 +51,13 @@ class TestExceptions(unittest.TestCase):
         with self.assertRaisesRegex(exceptions.NoValue, r'No value for .*\.'):
             raise exceptions.NoValue("abc")
 
+    def test_D_parameterExceptions(self):
+        with self.assertRaisesRegex(exceptions.InvalidType, r'\'.*\' is not an instance of .*\.'):
+            raise exceptions.InvalidType("abc", int)
+
+        with self.assertRaisesRegex(exceptions.DictionaryEmptyException, 'Text'):
+            raise exceptions.DictionaryEmptyException("Text")
+
     def test_E_invalidConstraints(self):
         with self.assertRaisesRegex(exceptions.InvalidPrimaryKeyColumn, r'.* not in columns\.'):
             raise exceptions.InvalidPrimaryKeyColumn("abc")
@@ -54,3 +70,15 @@ class TestExceptions(unittest.TestCase):
 
         with self.assertRaisesRegex(exceptions.InvalidNamedForeignKeyDictionary, r'Values for column .* are not defined\.'):
             raise exceptions.InvalidNamedForeignKeyDictionary("abc")
+
+        with self.assertRaisesRegex(exceptions.NotAClass, r'.* is not a class\.'):
+            raise exceptions.NotAClass("abc")
+
+        with self.assertRaisesRegex(exceptions.NotAFunction, r'.* is not a function\.'):
+            raise exceptions.NotAFunction("abc")
+
+        with self.assertRaisesRegex(exceptions.NotAString, r'.* is not a string\.'):
+            raise exceptions.NotAString("abc")
+
+        with self.assertRaisesRegex(exceptions.NotAMatchingClass, r'.* does not match .*\.'):
+            raise exceptions.NotAMatchingClass(int, str)

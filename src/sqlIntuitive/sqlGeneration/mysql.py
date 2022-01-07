@@ -2,20 +2,20 @@ from sqlIntuitive import exceptions
 
 def gen_create_stored_procedure(procedureName: str, sql_statement: str, delimiter: str, parameters: dict = {}) -> str:
     if not isinstance(procedureName, str):
-        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+        raise exceptions.InvalidType(procedureName, str)
 
     if not isinstance(sql_statement, str):
-        raise exceptions.InvalidType(f"'{sql_statement}' is not an instance of 'str'")
+        raise exceptions.InvalidType(sql_statement, str)
 
     if not isinstance(delimiter, str):
-        raise exceptions.InvalidType(f"'{delimiter}' is not an instance of 'str'")
+        raise exceptions.InvalidType(delimiter, str)
 
     if not isinstance(parameters, dict):
-        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'dict'")
+        raise exceptions.InvalidType(parameters, dict)
     else:
         for parameter in parameters:
             if not isinstance(parameter, str) or not isinstance(parameters[parameter], str):
-                raise exceptions.InvalidType(f"Dictionary of parameters key and value must be strings")
+                raise exceptions.InvalidType("Dictionary key and/or value", str)
 
     text = f"DELIMITER {delimiter}\nCREATE PROCEDURE {procedureName} ("
 
@@ -28,10 +28,10 @@ def gen_create_stored_procedure(procedureName: str, sql_statement: str, delimite
 
 def gen_exec_procedure(procedureName: str, parameters: list = [], placeholder: str = '?') -> tuple:
     if not isinstance(procedureName, str):
-        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+        raise exceptions.InvalidType(procedureName, str)
 
     if not isinstance(parameters, list):
-        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'list'")
+        raise exceptions.InvalidType(parameters, list)
 
     text = f"CALL {procedureName} ("
 

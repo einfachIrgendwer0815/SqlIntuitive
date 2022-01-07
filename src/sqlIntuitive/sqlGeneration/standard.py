@@ -21,10 +21,10 @@ def check_validName(text: str) -> bool:
 
 def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCombination: CombinationTypes = CombinationTypes.AND, defaultComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if type(conditions) != dict:
-        raise exceptions.InvalidType(f'{type(conditions)} is not a dict')
+        raise exceptions.InvalidType(conditions, dict)
 
     if type(combinations) != list:
-        raise exceptions.InvalidType(f'{type(combinations)} is not a list')
+        raise exceptions.InvalidType(combinations, list)
 
     if type(defaultCombination) != CombinationTypes:
         try:
@@ -97,10 +97,10 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCom
 
 def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Tablename empty.")
+        raise exceptions.InvalidTableNameException()
 
     if len(columns) == 0:
         columns = ('*')
@@ -138,15 +138,15 @@ def gen_sum(tableName: str, column: str = "", conditions: dict = {}, combination
 
 def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if not isinstance(mode, Count_avg_sum_modes):
-        raise exceptions.InvalidType(f"{mode} is not an instance of class 'Count_avg_sum_modes'")
+        raise exceptions.InvalidType(mode, Count_avg_sum_modes)
 
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Table name contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
     elif len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Table name empty.")
+        raise exceptions.InvalidTableNameException()
 
     if not isinstance(column, str):
-        raise exceptions.InvalidType(f"{column} is not an instance of class 'str'")
+        raise exceptions.InvalidType(column, str)
 
     if len(column) == 0:
         column = "*"
@@ -181,10 +181,10 @@ def gen_count_avg_sum(mode: Count_avg_sum_modes, tableName: str, column: str, co
 
 def gen_insert(tablename: str, column_values: dict, *, placeholder: str = "?") -> tuple:
     if check_validName(tablename) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(tablename) == 0:
-        raise exceptions.InvalidTableNameException("Tablename empty.")
+        raise exceptions.InvalidTableNameException()
 
     if len(column_values) == 0:
         raise exceptions.DictionaryEmptyException("No columns set.")
@@ -210,10 +210,10 @@ def gen_insert(tablename: str, column_values: dict, *, placeholder: str = "?") -
 
 def gen_update(tableName: str, newValues: dict, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Tablename empty.")
+        raise exceptions.InvalidTableNameException()
 
     if len(newValues) == 0:
         raise exceptions.DictionaryEmptyException("No values to change specified.")
@@ -245,10 +245,10 @@ def gen_update(tableName: str, newValues: dict, conditions: dict = {}, combinati
 
 def gen_delete(tableName: str, conditions: dict = {}, combinations: list = [], *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = "?") -> tuple:
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Tablename empty.")
+        raise exceptions.InvalidTableNameException()
 
     column_values_ordered = []
     text = f'DELETE FROM {tableName}'
@@ -267,10 +267,10 @@ def gen_delete(tableName: str, conditions: dict = {}, combinations: list = [], *
 
 def gen_create_db(dbName: str) -> str:
     if check_validName(dbName) == False:
-        raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
+        raise exceptions.InvalidDatabaseNameException()
 
     if len(dbName) == 0:
-        raise exceptions.InvalidDatabaseNameException("Databasename invalid.")
+        raise exceptions.InvalidDatabaseNameException()
 
     text = f'CREATE DATABASE {dbName};'
 
@@ -278,10 +278,10 @@ def gen_create_db(dbName: str) -> str:
 
 def gen_drop_db(dbName: str) -> str:
     if check_validName(dbName) == False:
-        raise exceptions.InvalidDatabaseNameException("Databasename contains invalid characters.")
+        raise exceptions.InvalidDatabaseNameException()
 
     if len(dbName) == 0:
-        raise exceptions.InvalidDatabaseNameException("Databasename invalid.")
+        raise exceptions.InvalidDatabaseNameException()
 
     text = f'DROP DATABASE {dbName};'
 
@@ -289,13 +289,13 @@ def gen_drop_db(dbName: str) -> str:
 
 def gen_create_table(tableName: str, columns: dict, *, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> str:
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(columns) == 0:
         raise exceptions.DictionaryEmptyException("No columns set.")
 
     if len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Tablename empty.")
+        raise exceptions.InvalidTableNameException()
 
     for primary in primaryKeys:
         if primary not in columns.keys():
@@ -364,10 +364,10 @@ def gen_create_table(tableName: str, columns: dict, *, primaryKeys: list = [], f
 
 def gen_drop_table(tableName: str) -> str:
     if check_validName(tableName) == False:
-        raise exceptions.InvalidTableNameException("Tablename contains invalid characters.")
+        raise exceptions.InvalidTableNameException()
 
     if len(tableName) == 0:
-        raise exceptions.InvalidTableNameException("Tablename invalid.")
+        raise exceptions.InvalidTableNameException()
 
     text = f'DROP TABLE {tableName};'
 
@@ -375,17 +375,17 @@ def gen_drop_table(tableName: str) -> str:
 
 def gen_create_stored_procedure(procedureName: str, sql_statement: str, parameters: dict = {}) -> str:
     if not isinstance(procedureName, str):
-        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+        raise exceptions.InvalidType(procedureName, str)
 
     if not isinstance(sql_statement, str):
-        raise exceptions.InvalidType(f"'{sql_statement}' is not an instance of 'str'")
+        raise exceptions.InvalidType(sql_statement, str)
 
     if not isinstance(parameters, dict):
-        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'dict'")
+        raise exceptions.InvalidType(parameters, dict)
     else:
         for parameter in parameters:
             if not isinstance(parameter, str) or not isinstance(parameters[parameter], str):
-                raise exceptions.InvalidType(f"Dictionary of parameters key and value must be strings")
+                raise exceptions.InvalidType("Dictionary key and/or value", str)
 
     text = f"CREATE PROCEDURE {procedureName}"
 
@@ -398,10 +398,10 @@ def gen_create_stored_procedure(procedureName: str, sql_statement: str, paramete
 
 def gen_exec_procedure(procedureName: str, parameters: dict = {}, placeholder: str = '?') -> tuple:
     if not isinstance(procedureName, str):
-        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+        raise exceptions.InvalidType(procedureName, str)
 
     if not isinstance(parameters, dict):
-        raise exceptions.InvalidType(f"'{parameters}' is not an instance of 'dict'")
+        raise exceptions.InvalidType(parameters, dict)
 
     text = f"EXEC {procedureName}"
 
@@ -422,6 +422,6 @@ def gen_exec_procedure(procedureName: str, parameters: dict = {}, placeholder: s
 
 def gen_drop_procedure(procedureName: str) -> str:
     if not isinstance(procedureName, str):
-        raise exceptions.InvalidType(f"'{procedureName}' is not an instance of 'str'")
+        raise exceptions.InvalidType(procedureName, str)
 
     return f"DROP PROCEDURE {procedureName};"

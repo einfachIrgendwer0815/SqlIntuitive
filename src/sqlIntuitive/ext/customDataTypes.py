@@ -4,29 +4,29 @@ from sqlIntuitive import exceptions
 class CustomDataType():
     def __init__(self, name: str, cls, clsToStringFunc, stringToClsFunc):
         if type(name) != str:
-            raise exceptions.NotAString(f"{type(name)} is not a string.")
+            raise exceptions.NotAString(name)
         self.name = name.upper()
 
         if isinstance(cls, type) != True:
-            raise exceptions.NotAClass(f"{cls} is not a class.")
+            raise exceptions.NotAClass(cls)
         self.cls = cls
 
         if hasattr(clsToStringFunc, '__call__') != True:
-            raise exceptions.NotAFunction(f"{clsToStringFunc} is not a function.")
+            raise exceptions.NotAFunction(clsToStringFunc)
         self.clsToStringFunc = clsToStringFunc
 
         if hasattr(stringToClsFunc, '__call__') != True:
-            raise exceptions.NotAFunction(f"{stringToClsFunc} is not a function.")
+            raise exceptions.NotAFunction(stringToClsFunc)
         self.stringToClsFunc = stringToClsFunc
 
     def convertToString(self, clsInstance) -> str:
         if type(clsInstance) != self.cls:
-            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not match {self.cls}.")
+            raise exceptions.NotAMatchingClass(type(clsInstance), self.cls)
 
         convertedText = self.clsToStringFunc(clsInstance)
 
         if type(convertedText) != str:
-            raise exceptions.NotAString(f"{self.clsToStringFunc} did not return a string.")
+            raise exceptions.NotAString(f"Return type of {self.clsToStringFunc}")
 
         convertedText = b64encode(convertedText.encode()).decode()
 
@@ -36,7 +36,7 @@ class CustomDataType():
 
     def convertToClsInstance(self, string: str):
         if type(string) != str:
-            raise exceptions.NotAString(f"{type(string)} is not a string.")
+            raise exceptions.NotAString(string)
 
         splitted = string.split(';')
 
@@ -47,7 +47,7 @@ class CustomDataType():
 
         clsInstance = self.stringToClsFunc(decodedText)
         if isinstance(clsInstance, self.cls) != True:
-            raise exceptions.NotAMatchingClass(f"{type(clsInstance)} does not macht {self.cls}.")
+            raise exceptions.NotAMatchingClass(type(clsInstance), self.cls)
 
         return clsInstance
 
@@ -75,7 +75,7 @@ class AdaptionProvider():
 
     def removeDataType(self, name: str) -> None:
         if type(name) != str:
-            raise exceptions.NotAString(f"{type(name)} is not a string.")
+            raise exceptions.NotAString(name)
 
         if name.upper() == "STR_ENCODED":
             raise exceptions.DeletingTypeNotAllowed("It is not allowed to remove STR_ENCODED.")
