@@ -1,0 +1,2 @@
+class SqlIntuitiveException(Exception):
+    pass
