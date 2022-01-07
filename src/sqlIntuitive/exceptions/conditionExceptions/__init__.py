@@ -1,15 +1,2 @@
-from sqlIntuitive.exceptions.baseException import SqlIntuitiveException
-
-class ConditionException(SqlIntuitiveException):
-    pass
-
-# ConditionExceptions
-
-class NotAComparisonType(ConditionException):
-    pass
-
-class NotACombinationType(ConditionException):
-    pass
-
-class NoValue(ConditionException):
-    pass
+from sqlIntuitive.exceptions.conditionExceptions.baseException import SqlIntuitiveException
+from sqlIntuitive.exceptions.conditionExceptions.subexceptions import *

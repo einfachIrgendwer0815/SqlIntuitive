@@ -30,13 +30,13 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCom
         try:
             defaultCombination = CombinationTypes(defaultCombination)
         except ValueError:
-            raise exceptions.NotACombinationType(f'{type(defaultCombination)} is not a combination type')
+            raise exceptions.NotACombinationType(type(defaultCombination))
 
     if type(defaultComparison) != ComparisonTypes:
         try:
             defaultComparison = ComparisonTypes(defaultComparison)
         except ValueError:
-            raise exceptions.NotAComparisonType(f'{type(defaultComparison)} is not a comparison type')
+            raise exceptions.NotAComparisonType(type(defaultComparison))
 
     combinations = combinations.copy()
     combinations_new = []
@@ -60,7 +60,7 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCom
     for column in conditions.keys():
         if type(conditions[column]) == dict:
             if 'value' not in conditions[column].keys():
-                raise exceptions.NoValue(f'no value for column {column}')
+                raise exceptions.NoValue(column)
 
             if 'comparison' in conditions[column].keys():
                 comparison = conditions[column]['comparison']

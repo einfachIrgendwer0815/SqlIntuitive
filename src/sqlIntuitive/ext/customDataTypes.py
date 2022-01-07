@@ -116,7 +116,7 @@ class AdaptionProvider():
         for key in dictionary.keys():
             if type(dictionary[key]) == dict:
                 if 'value' not in dictionary[key].keys():
-                    raise exceptions.NoValue(f'no value for {key}')
+                    raise exceptions.NoValue(key)
                 dictionary[key]['value'] = self.convertToString(dictionary[key]['value'])
             else:
                 dictionary[key] = self.convertToString(dictionary[key])
