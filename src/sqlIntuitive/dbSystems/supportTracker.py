@@ -76,7 +76,7 @@ def ifSupported(feature: Features):
                 return func(self, *args, **kwargs)
             else:
                 if EXCEPTION_IF_NOT_SUPPORTED:
-                    raise NotSupported(f'{feature.name} is not supported in {name}')
+                    raise NotSupported(feature.name, name)
                 else:
                     return None
 
