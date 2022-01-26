@@ -1,6 +1,8 @@
 from sqlIntuitive import dbSystems
 from sqlIntuitive.ext import customDataTypes
 
+from sqlIntuitive import exceptions
+
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 
 import sqlite3
@@ -230,3 +232,31 @@ class TestSqliteSystem(unittest.TestCase):
 
         res = self.memory_db.select_sum("TableB", column="col2", distinct=True)
         self.assertEqual(res, 123+456+789)
+
+    def test_P_cursorIsNone(self):
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.create_table("TableB", {"col1": "string"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.drop_table("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.insert_into("TableB", {"col1": "abc"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.update("TableB", {"col1": "abc"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.delete_from("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.select_from("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.select_count("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.select_avg("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.select_sum("TableB", "col1")

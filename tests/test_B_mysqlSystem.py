@@ -2,6 +2,8 @@ from sqlIntuitive import dbSystems
 from sqlIntuitive.ext import customDataTypes
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 
+from sqlIntuitive import exceptions
+
 import unittest
 
 import json, os
@@ -272,3 +274,31 @@ class TestMysqlSystem(unittest.TestCase):
 
         res = self.mydb.select_sum("TableB", column="col4", distinct=True)
         self.assertEqual(res, 123+456+789)
+
+    def test_P_cursorIsNone(self):
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.create_table("TableB", {"col1": "string"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.drop_table("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.insert_into("TableB", {"col1": "abc"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.update("TableB", {"col1": "abc"})
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.delete_from("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.select_from("TableB")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.select_count("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.select_avg("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.select_sum("TableB", "col1")

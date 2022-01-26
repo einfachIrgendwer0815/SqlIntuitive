@@ -2,6 +2,16 @@ from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features, isSupported
+from sqlIntuitive.exceptions import CursorIsNone
+
+def cursorNotNone(func):
+    def inner(self, *args, **kwargs):
+        if self.__getattribute__('cursor') != None:
+            return func(self, *args, **kwargs)
+
+        raise CursorIsNone()
+
+    return inner
 
 class BaseDbSystem():
     placeholder = "%s"
@@ -30,6 +40,7 @@ class BaseDbSystem():
         self.adaptProvider.addDataType_raw(name, cls, clsToStringFunc, stringToClsFunc)
 
     @ifSupported(Features.SQL_CREATE_TABLE)
+    @cursorNotNone
     def create_table(self, tableName: str, columns: dict, *, primaryKeys: list = [], foreignKeys: dict = {}, namedForeignKeys: dict = {}, uniqueColumns: list = [], safeMode: bool = True) -> None:
         sql = sqlGeneration.standard.gen_create_table(tableName, columns, primaryKeys=primaryKeys, foreignKeys=foreignKeys, namedForeignKeys=namedForeignKeys, uniqueColumns=uniqueColumns, safeMode=safeMode)
 
@@ -38,6 +49,7 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_DROP_TABLE)
+    @cursorNotNone
     def drop_table(self, tableName: str) -> None:
         sql = sqlGeneration.standard.gen_drop_table(tableName)
 
@@ -46,6 +58,7 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_INSERT_INTO)
+    @cursorNotNone
     def insert_into(self, tableName: str, column_values: dict) -> None:
         adaptedColumnValues = self.adaptProvider.convertDictToString(column_values)
 
@@ -56,6 +69,7 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_UPDATE)
+    @cursorNotNone
     def update(self, tableName: str, newColumnValues: dict, conditions: dict = {}, *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> None:
         adaptedNewColumnValues = self.adaptProvider.convertDictToString(newColumnValues)
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
@@ -67,6 +81,7 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_DELETE_FROM)
+    @cursorNotNone
     def delete_from(self, tableName: str, conditions: dict = {}, *, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> None:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
@@ -77,6 +92,7 @@ class BaseDbSystem():
         self.dbCon.commit()
 
     @ifSupported(Features.SQL_SELECT_FROM)
+    @cursorNotNone
     def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> list:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
@@ -104,6 +120,7 @@ class BaseDbSystem():
         return self._select_count_avg_sum(mode=sqlGeneration.standard.Count_avg_sum_modes.SUM, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison)
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
+    @cursorNotNone
     def _select_count_avg_sum(self, mode: sqlGeneration.standard.Count_avg_sum_modes, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO):
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
@@ -116,6 +133,7 @@ class BaseDbSystem():
         return res[0][0]
 
     @ifSupported(Features.SQL_STORED_PROCEDURES)
+    @cursorNotNone
     def create_procedure(self, procedureName: str, sql_statement: str, parameters: dict = {}) -> None:
         adaptedParameters = self.adaptionProvider.convertDictToString(parameters)
 
@@ -124,6 +142,7 @@ class BaseDbSystem():
         self.cursor.execute(sql)
 
     @ifSupported(Features.SQL_STORED_PROCEDURES)
+    @cursorNotNone
     def exec_procedure(self,  procedureName: str, parameters: dict = {}) -> list:
         adaptedParameters = self.adaptionProvider.convertDictToString(parameters)
 
@@ -136,6 +155,7 @@ class BaseDbSystem():
         return res
 
     @ifSupported(Features.SQL_STORED_PROCEDURES)
+    @cursorNotNone
     def drop_procedure(self, procedureName: str) -> None:
         sql = sqlGeneration.standard.gen_drop_procedure(procedureName)
 
