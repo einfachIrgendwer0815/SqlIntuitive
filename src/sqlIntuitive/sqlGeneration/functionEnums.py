@@ -1,6 +1,10 @@
 from enum import Enum, auto
 
-class Standard(Enum):
+class NameAsValue(Enum):
+    def _generate_next_value_(name, start, count, last_values):
+        return name
+
+class Standard(NameAsValue):
     SELECT_FROM = auto()
     SELECT_COUNT = auto()
     SELECT_AVG = auto()
@@ -16,6 +20,6 @@ class Standard(Enum):
     EXEC_PROCEDURE = auto()
     DROP_PROCEDURE = auto()
 
-class MySQL(Enum):
+class MySQL(NameAsValue):
     CREATE_STORED_PROCEDURE = auto()
     EXEC_PROCEDURE = auto()
