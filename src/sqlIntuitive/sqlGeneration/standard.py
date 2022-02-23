@@ -373,6 +373,30 @@ def gen_drop_table(tableName: str) -> str:
 
     return text
 
+def gen_alter_table_add(tableName: str, column_name: str, column_type: str) -> str:
+    if check_validName(tableName) == False or len(tableName) == 0:
+        raise exceptions.InvalidTableNameException()
+
+    text = f'ALTER TABLE {tableName} ADD {column_name} {column_type};'
+
+    return text
+
+def gen_alter_table_drop(tableName: str, column_name) -> str:
+    if check_validName(tableName) == False or len(tableName) == 0:
+        raise exceptions.InvalidTableNameException()
+
+    text = f'ALTER TABLE {tableName} DROP COLUMN {column_name};'
+
+    return text
+
+def gen_alter_table_modify(tableName: str, column_name: str, column_type: str) -> str:
+    if check_validName(tableName) == False or len(tableName) == 0:
+        raise exceptions.InvalidTableNameException()
+
+    text = f'ALTER TABLE {tableName} ALTER COLUMN {column_name} {column_type};'
+
+    return text
+
 def gen_create_stored_procedure(procedureName: str, sql_statement: str, parameters: dict = {}) -> str:
     if not isinstance(procedureName, str):
         raise exceptions.InvalidType(procedureName, str)

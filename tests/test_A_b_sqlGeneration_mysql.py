@@ -48,3 +48,13 @@ class TestSqlGenerationMySQL(unittest.TestCase):
 
         with self.assertRaises(exceptions.InvalidType):
             mysql.gen_exec_procedure("Test", ('abc','def'))
+
+    def test_C_a_gen_alter_table_modify(self):
+        self.assertEqual(mysql.gen_alter_table_modify("TableA", "col3", "int"), "ALTER TABLE TableA MODIFY COLUMN col3 int;")
+
+    def test_C_b_gen_alter_table_modify(self):
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            mysql.gen_alter_table_modify("T@bleA", "col1", "int")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            mysql.gen_alter_table_modify("", "col1", "int")

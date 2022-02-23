@@ -352,9 +352,37 @@ class TestSqlGenerationStandard(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidType):
             standard.gen_exec_procedure("Test", ['abc','def'])
 
-    def test_B_A_b_gen_drop_procedure(self):
+    def test_B_A_a_gen_drop_procedure(self):
         self.assertEqual(standard.gen_drop_procedure("Test"), "DROP PROCEDURE Test;")
 
     def test_B_A_b_gen_drop_procedure(self):
         with self.assertRaises(exceptions.InvalidType):
             standard.gen_drop_procedure(123)
+
+    def test_B_B_a_gen_alter_table_add(self):
+        self.assertEqual(standard.gen_alter_table_add("TableA", "col1", "varchar(10)"), "ALTER TABLE TableA ADD col1 varchar(10);")
+
+    def test_B_B_b_gen_alter_table_drop(self):
+        self.assertEqual(standard.gen_alter_table_drop("TableA", "col4"), "ALTER TABLE TableA DROP COLUMN col4;")
+
+    def test_B_B_c_gen_alter_table_modify(self):
+        self.assertEqual(standard.gen_alter_table_modify("TableA", "col3", "int"), "ALTER TABLE TableA ALTER COLUMN col3 int;")
+
+    def test_B_B_d_gen_alter_table(self):
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_add("T@bleA", "col1", "int")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_add("", "col1", "int")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_drop("T@bleA", "col1")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_drop("", "col1")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_modify("T@bleA", "col1", "int")
+
+        with self.assertRaises(exceptions.InvalidTableNameException):
+            standard.gen_alter_table_modify("", "col1", "int")
