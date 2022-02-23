@@ -1,3 +1,8 @@
+# 0.7.1
+
+- added raising CursorNotNone exception if cursor is none when trying to execute database operations
+
+
 # 0.7.0
 
 - included version, author and license information to the main __init__.py
