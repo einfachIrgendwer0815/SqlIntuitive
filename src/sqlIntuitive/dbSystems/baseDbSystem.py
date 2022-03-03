@@ -57,6 +57,33 @@ class BaseDbSystem():
 
         self.dbCon.commit()
 
+    @ifSupported(Features.SQL_ALTER_TABLE_ADD)
+    @cursorNotNone
+    def alter_table_add(self, tableName: str, column_name: str, column_type: str) -> None:
+        sql = sqlGeneration.standard.gen_alter_table_add(tableName, column_name, column_type)
+        print(sql)
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()
+
+    @ifSupported(Features.SQL_ALTER_TABLE_DROP)
+    @cursorNotNone
+    def alter_table_drop(self, tableName: str, column_name: str) -> None:
+        sql = sqlGeneration.standard.gen_alter_table_drop(tableName, column_name)
+
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()
+
+    @ifSupported(Features.SQL_ALTER_TABLE_MODIFY)
+    @cursorNotNone
+    def alter_table_modify(self, tableName: str, column_name: str, column_type: str) -> None:
+        sql = sqlGeneration.standard.gen_alter_table_modify(tableName, column_name, column_type)
+
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()
+
     @ifSupported(Features.SQL_INSERT_INTO)
     @cursorNotNone
     def insert_into(self, tableName: str, column_values: dict) -> None:

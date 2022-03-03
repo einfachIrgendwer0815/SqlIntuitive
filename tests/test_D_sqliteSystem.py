@@ -21,21 +21,21 @@ with open((defaultFile if os.path.exists(defaultFile) else altFile), 'r') as fil
 @unittest.skipIf(runTestSqliteSystem == False, 'Skipped TestSqliteSystem via config')
 class TestSqliteSystem(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def tearDownClass(cls):
+        os.remove(dbFile)
+
+    def setUp(self):
         file_db = sqlite3.connect(dbFile)
 
         cursor = file_db.cursor()
 
         cursor.execute("CREATE TABLE IF NOT EXISTS TableA (col1 string, col2 int, col3 bool, col4 string, PRIMARY KEY (col1), UNIQUE (col4));")
+        cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 string, col2 int, col3 bool, col4 string);")
 
         cursor.close()
+        file_db.commit()
         file_db.close()
 
-    @classmethod
-    def tearDownClass(cls):
-        os.remove(dbFile)
-
-    def setUp(self):
         self.memory_db = dbSystems.SqliteDbSystem(database=":memory:")
         self.file_db = dbSystems.SqliteDbSystem(database=dbFile)
 
@@ -44,6 +44,10 @@ class TestSqliteSystem(unittest.TestCase):
 
     def tearDown(self):
         self.memory_db.close_connection()
+
+        cursor = self.file_db.dbCon.cursor()
+        cursor.execute("DROP TABLE IF EXISTS TableA;")
+        cursor.execute("DROP TABLE IF EXISTS TableB;")
         self.file_db.close_connection()
 
     def test_A_connect_to_db(self):
@@ -260,3 +264,23 @@ class TestSqliteSystem(unittest.TestCase):
 
         with self.assertRaises(exceptions.CursorIsNone):
             self.memory_db.select_sum("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.memory_db.alter_table_add("TableB", "col123", "int")
+
+    def test_Q_alter_table_add(self):
+        self.file_db.create_cursor()
+
+        self.file_db.alter_table_add("TableB", "colABC", "int")
+
+    def test_R_alter_table_drop(self):
+        self.file_db.create_cursor()
+
+        with self.assertRaises(exceptions.NotSupported):
+            self.file_db.alter_table_drop("TableB", "col1")
+
+    def test_S_alter_table_modify(self):
+        self.file_db.create_cursor()
+
+        with self.assertRaises(exceptions.NotSupported):
+            self.file_db.alter_table_modify("TableB", "col3", "int")

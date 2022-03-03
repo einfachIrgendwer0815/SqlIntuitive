@@ -6,13 +6,15 @@ from time import sleep
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.dbSystems import BaseDbSystem
-from sqlIntuitive.dbSystems.supportTracker import or_values, Features
+from sqlIntuitive.dbSystems.baseDbSystem import cursorNotNone
+from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupported
 
 class MySqlDbSystem(BaseDbSystem):
     placeholder = "%s"
     SUPPORTS = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,
+        Features.SQL_ALTER_TABLE,
         Features.SQL_INSERT_INTO,
         Features.SQL_UPDATE,
         Features.SQL_DELETE_FROM,
@@ -60,3 +62,12 @@ class MySqlDbSystem(BaseDbSystem):
             return
 
         self.cursor = self.dbCon.cursor()
+
+    @ifSupported(Features.SQL_ALTER_TABLE_MODIFY)
+    @cursorNotNone
+    def alter_table_modify(self, tableName: str, column_name: str, column_type: str) -> None:
+        sql = sqlGeneration.mysql.gen_alter_table_modify(tableName, column_name, column_type)
+
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()

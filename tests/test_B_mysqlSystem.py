@@ -34,6 +34,7 @@ class TestMysqlSystem(unittest.TestCase):
             cursor = mydb.dbCon.cursor()
 
             cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint, col4 int);")
+            cursor.execute("CREATE TABLE IF NOT EXISTS TableC (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint, col4 int);")
         else:
             raise Exception()
 
@@ -61,7 +62,26 @@ class TestMysqlSystem(unittest.TestCase):
         cursor = self.mydb.dbCon.cursor()
 
         cursor.execute("DELETE FROM TableB;")
+        cursor.execute("DELETE FROM TableC;")
         self.mydb.dbCon.commit()
+
+    @classmethod
+    def tearDownClass(cls):
+        mydb = dbSystems.MySqlDbSystem(
+            host=cls.mysql_login["host"],
+            database=cls.mysql_login["database"],
+            username=cls.mysql_login["username"],
+            password=cls.mysql_login["password"],
+        )
+
+        mydb.connect_to_db()
+
+        cursor = mydb.create_cursor()
+
+        mydb.cursor.execute("DROP TABLE TableB;")
+        mydb.cursor.execute("DROP TABLE TableC;")
+
+        mydb.close_connection()
 
     def test_A_connect_to_db(self):
         self.assertTrue(self.mydb.connect_to_db())
@@ -302,3 +322,30 @@ class TestMysqlSystem(unittest.TestCase):
 
         with self.assertRaises(exceptions.CursorIsNone):
             self.mydb.select_sum("TableB", "col1")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.alter_table_add("TableB", "colABC", "int")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.alter_table_drop("TableB", "colABC")
+
+        with self.assertRaises(exceptions.CursorIsNone):
+            self.mydb.alter_table_modify("TableB", "colABC", "int")
+
+    def test_Q_alter_table_add(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.alter_table_add("TableC", "col123", "int")
+
+    def test_R_alter_table_drop(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.alter_table_drop("TableC", "col1")
+
+    def test_S_alter_table_add(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.alter_table_modify("TableC", "col4", "varchar(10)")

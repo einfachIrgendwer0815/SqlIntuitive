@@ -381,7 +381,7 @@ def gen_alter_table_add(tableName: str, column_name: str, column_type: str) -> s
 
     return text
 
-def gen_alter_table_drop(tableName: str, column_name) -> str:
+def gen_alter_table_drop(tableName: str, column_name: str) -> str:
     if check_validName(tableName) == False or len(tableName) == 0:
         raise exceptions.InvalidTableNameException()
 
