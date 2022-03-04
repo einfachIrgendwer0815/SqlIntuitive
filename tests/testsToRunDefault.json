@@ -1,6 +1,7 @@
 {
   "sqlGeneration_standard": true,
   "sqlGeneration_mysql": true,
+  "sqlGeneration_sqlite": true,
   "mysqlSystem": false,
   "customDataTypes": true,
   "sqliteSystem": true,
