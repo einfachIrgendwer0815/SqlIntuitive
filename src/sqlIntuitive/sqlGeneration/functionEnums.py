@@ -16,6 +16,9 @@ class Standard(NameAsValue):
     DROP_DB = auto()
     CREATE_TABLE = auto()
     DROP_TABLE = auto()
+    ALTER_TABLE_ADD = auto()
+    ALTER_TABLE_DROP = auto()
+    ALTER_TABLE_MODIFY = auto()
     CREATE_STORED_PROCEDURE = auto()
     EXEC_PROCEDURE = auto()
     DROP_PROCEDURE = auto()
@@ -23,3 +26,7 @@ class Standard(NameAsValue):
 class MySQL(NameAsValue):
     CREATE_STORED_PROCEDURE = auto()
     EXEC_PROCEDURE = auto()
+    ALTER_TABLE_MODIFY = auto()
+
+class SqLite(NameAsValue):
+    ALTER_TABLE_RENAME = auto()
