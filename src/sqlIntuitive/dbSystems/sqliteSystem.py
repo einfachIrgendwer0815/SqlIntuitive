@@ -3,7 +3,8 @@ import sqlite3
 from sqlIntuitive import sqlGeneration
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.dbSystems import BaseDbSystem
-from sqlIntuitive.dbSystems.supportTracker import or_values, Features
+from sqlIntuitive.dbSystems.baseDbSystem import cursorNotNone
+from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupported
 
 class SqliteDbSystem(BaseDbSystem):
     placeholder="?"
@@ -11,6 +12,7 @@ class SqliteDbSystem(BaseDbSystem):
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,
         Features.SQL_ALTER_TABLE_ADD,
+        Features.SQL_ALTER_TABLE_RENAME,
         Features.SQL_INSERT_INTO,
         Features.SQL_UPDATE,
         Features.SQL_DELETE_FROM,
@@ -58,3 +60,21 @@ class SqliteDbSystem(BaseDbSystem):
             return
 
         self.cursor = self.dbCon.cursor()
+
+    @ifSupported(Features.SQL_ALTER_TABLE_RENAME)
+    @cursorNotNone
+    def alter_table_rename_table(self, tableName: str, newTableName: str):
+        sql = sqlGeneration.sqlite.gen_alter_table_rename_table(tableName, newTableName)
+
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()
+
+    @ifSupported(Features.SQL_ALTER_TABLE_RENAME)
+    @cursorNotNone
+    def alter_table_rename_column(self, tableName: str, columnName: str, newColumnName: str):
+        sql = sqlGeneration.sqlite.gen_alter_table_rename_column(tableName, columnName, newColumnName)
+
+        self.cursor.execute(sql)
+
+        self.dbCon.commit()

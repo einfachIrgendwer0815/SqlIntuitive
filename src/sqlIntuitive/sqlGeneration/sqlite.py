@@ -9,7 +9,7 @@ def gen_alter_table_rename_table(tableName: str, newTableName: str) -> str:
 
     return text
 
-def gen_alter_table_rename_column(tableName: str, columnName: str, newColumnName) -> str:
+def gen_alter_table_rename_column(tableName: str, columnName: str, newColumnName: str) -> str:
     if check_validName(tableName) == False or len(tableName) == 0:
         raise exceptions.InvalidTableNameException()
 

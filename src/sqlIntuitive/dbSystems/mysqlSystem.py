@@ -14,7 +14,9 @@ class MySqlDbSystem(BaseDbSystem):
     SUPPORTS = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,
-        Features.SQL_ALTER_TABLE,
+        Features.SQL_ALTER_TABLE_ADD,
+        Features.SQL_ALTER_TABLE_DROP,
+        Features.SQL_ALTER_TABLE_MODIFY,
         Features.SQL_INSERT_INTO,
         Features.SQL_UPDATE,
         Features.SQL_DELETE_FROM,

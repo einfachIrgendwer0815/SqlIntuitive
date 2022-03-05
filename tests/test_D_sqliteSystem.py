@@ -284,3 +284,17 @@ class TestSqliteSystem(unittest.TestCase):
 
         with self.assertRaises(exceptions.NotSupported):
             self.file_db.alter_table_modify("TableB", "col3", "int")
+
+    def test_T_alter_table_rename_table(self):
+        self.memory_db.create_cursor()
+
+        self.memory_db.cursor.execute("CREATE TABLE TableB (col1 int);")
+
+        self.memory_db.alter_table_rename_table("TableB", "TableC")
+
+    def test_U_alter_table_rename_column(self):
+        self.memory_db.create_cursor()
+
+        self.memory_db.cursor.execute("CREATE TABLE TableB (col1 int);")
+
+        self.memory_db.alter_table_rename_column("TableB", "col1", "colA")

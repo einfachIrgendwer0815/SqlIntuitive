@@ -61,7 +61,7 @@ class BaseDbSystem():
     @cursorNotNone
     def alter_table_add(self, tableName: str, column_name: str, column_type: str) -> None:
         sql = sqlGeneration.standard.gen_alter_table_add(tableName, column_name, column_type)
-        print(sql)
+
         self.cursor.execute(sql)
 
         self.dbCon.commit()
