@@ -18,6 +18,7 @@ setup(
     version=version,
     description='Library for easy and intuitive use of database systems.',
     long_description='Library for easy and intuitive use of database systems.',
+    long_description_content_type="text/plain",
     author="Moritz Bauer",
     url="https://www.github.com/einfachIrgendwer0815/SqlIntuitive",
     license="MIT",
