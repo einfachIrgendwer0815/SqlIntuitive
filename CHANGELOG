@@ -1,3 +1,11 @@
+# 0.8.0
+
+- added enums of available sql generation functions per dbSystem
+- added 'alter table' commands
+- added 'alter table rename' command for sqlite
+- added __main__.py
+- added long_description_content_type field (__init__.py)
+
 # 0.7.1
 
 - added raising CursorNotNone exception if cursor is none when trying to execute database operations
