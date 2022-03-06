@@ -4,8 +4,10 @@ from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features, isSupported
 from sqlIntuitive.exceptions import CursorIsNone
 
-def cursorNotNone(func):
-    def inner(self, *args, **kwargs):
+from typing import types, Union
+
+def cursorNotNone(func: types.FunctionType) -> types.FunctionType:
+    def inner(self, *args, **kwargs) -> Union[types.FunctionType, None]:
         if self.__getattribute__('cursor') != None:
             return func(self, *args, **kwargs)
 
@@ -14,8 +16,8 @@ def cursorNotNone(func):
     return inner
 
 class BaseDbSystem():
-    placeholder = "%s"
-    SUPPORTS = Features.ALL.value
+    placeholder: str = "%s"
+    SUPPORTS: int = Features.ALL.value
 
     def __init__(self, database: str, adaptionProvider: AdaptionProvider = None) -> None:
         self.database = database

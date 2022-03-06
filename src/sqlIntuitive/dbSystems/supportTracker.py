@@ -1,9 +1,11 @@
 from enum import Enum
 from sqlIntuitive.exceptions import NotSupported
 
-EXCEPTION_IF_NOT_SUPPORTED = True
+from typing import types, Union
 
-def reuseLastReturn(func):
+EXCEPTION_IF_NOT_SUPPORTED: bool = True
+
+def reuseLastReturn(func: types.FunctionType) -> types.FunctionType:
     lastReturn = None
 
     def replaceFunc(*args, **kwargs):
@@ -17,7 +19,7 @@ def reuseLastReturn(func):
     return replaceFunc
 
 @reuseLastReturn
-def nextPowerOf2(lastReturn: int):
+def nextPowerOf2(lastReturn: int) -> int:
     if lastReturn == None: return 1
 
     return 2 * lastReturn
@@ -54,7 +56,7 @@ class Features(Enum):
     # all
     ALL = GROUP_SQL | GROUP_ADDON
 
-def or_values(features: list):
+def or_values(features: list) -> int:
     value = 0
     for feature in features:
         value = value | feature.value
@@ -66,9 +68,9 @@ def isSupported(feature: Features, supported: int) -> bool:
         return True
     return False
 
-def ifSupported(feature: Features):
+def ifSupported(feature: Features) -> types.FunctionType:
 
-    def decorator(func):
+    def decorator(func) -> types.FunctionType:
         def replaceFunc(self, *args, **kwargs):
             supported = False
             name = self.__class__.__name__

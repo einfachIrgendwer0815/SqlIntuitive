@@ -10,8 +10,8 @@ from sqlIntuitive.dbSystems.baseDbSystem import cursorNotNone
 from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupported
 
 class MySqlDbSystem(BaseDbSystem):
-    placeholder = "%s"
-    SUPPORTS = or_values([
+    placeholder: str = "%s"
+    SUPPORTS: int = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,
         Features.SQL_ALTER_TABLE_ADD,

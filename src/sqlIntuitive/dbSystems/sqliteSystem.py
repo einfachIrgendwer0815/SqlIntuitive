@@ -7,8 +7,8 @@ from sqlIntuitive.dbSystems.baseDbSystem import cursorNotNone
 from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupported
 
 class SqliteDbSystem(BaseDbSystem):
-    placeholder="?"
-    SUPPORTS = or_values([
+    placeholder: str = "?"
+    SUPPORTS: int = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,
         Features.SQL_ALTER_TABLE_ADD,
