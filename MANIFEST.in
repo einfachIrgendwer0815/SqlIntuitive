@@ -1,4 +1,7 @@
 include requirements.txt
 include version.json
+
+include mkdocs.yml
+
 graft docs
 recursive-include tests *.py *[dD]efault.json

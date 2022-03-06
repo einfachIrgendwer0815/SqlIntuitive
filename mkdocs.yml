@@ -1,0 +1,12 @@
+site_name: My Docs
+
+nav:
+  - Home: 'index.md'
+  - 'Getting started': 'gettingStarted.md'
+  - 'User Guide':
+    - 'Overview': 'userGuide/overview.md'
+
+  - 'Code docs':
+    - 'Overview': 'codeDocs/overview.md'
+
+  - 'Changelog': 'changelog.md'
