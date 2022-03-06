@@ -1,21 +1,16 @@
 # Getting started
 
 ## Installation
-First of all you need to install the library. There are two ways to do that:
 
-### PIP
-Make sure you have PIP installed.
-<br>
-Then run:
-```
+SqlIntuitive can be installed simply by running:
+```bash
 pip install sqlIntuitive
 ```
-wich will install the latest version.
+...wich will install the latest version.
+That's already it! You can then import it as usual with:
+```python
+import sqlIntuitive
+```
 
-### Source
-
-#### Downloading and installation
-
-#### Testing
-
-> Note: This step is optional and usually not essential.
+## First steps
+To learn how to use SqlIntuitive, see [the user guide](userGuide/overview.md)
