@@ -1,4 +1,9 @@
-site_name: My Docs
+site_name: SqlIntuitive
+site_description: Project documentation
+site_author: Moritz Bauer (einfachIrgendwer0815)
+
+repo_url: https://github.com/einfachIrgendwer0815/SqlIntuitive
+edit_uri: ""
 
 nav:
   - Home: 'index.md'
