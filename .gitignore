@@ -1,0 +1,8 @@
+/build
+/dist
+/site
+/src
+/tests
+/venv
+/.eggs
+/.pytest_cache
