@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Moritz Bauer (einfachIrgendwer0815)">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>Changelog - SqlIntuitive</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">SqlIntuitive</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="../gettingStarted/" class="nav-link">Getting started</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">User Guide <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../userGuide/overview/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Code docs <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../codeDocs/overview/" class="dropdown-item">Overview</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">Changelog</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../codeDocs/overview/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/einfachIrgendwer0815/SqlIntuitive" class="nav-link"><i class="fa fa-github"></i> GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#changelog" class="nav-link">Changelog</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#080-alter-table-commands" class="nav-link">0.8.0 - Alter table commands</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#071-cursornotnone" class="nav-link">0.7.1 - CursorNotNone</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#070-support-tracker-select-command-enhancement" class="nav-link">0.7.0 - Support tracker, select command enhancement, ...</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#060-sqlite-support" class="nav-link">0.6.0 - Sqlite support</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#050-custom-data-types" class="nav-link">0.5.0 - Custom data types</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#042" class="nav-link">0.4.2</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#041" class="nav-link">0.4.1</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#040" class="nav-link">0.4.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#032" class="nav-link">0.3.2</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#030" class="nav-link">0.3.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#022" class="nav-link">0.2.2</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#021" class="nav-link">0.2.1</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#020" class="nav-link">0.2.0</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="changelog">Changelog</h1>
+<p>A full list of all changes ordered by the version they were made in.</p>
+<hr />
+<h2 id="080-alter-table-commands">0.8.0 - Alter table commands</h2>
+<ul>
+<li>added enums of available sql generation functions per dbSystem</li>
+<li>added 'alter table' commands</li>
+<li>added 'alter table rename' command for sqlite</li>
+<li>added __main__.py</li>
+<li>added long_description_content_type field (__init__.py)</li>
+</ul>
+<h2 id="071-cursornotnone">0.7.1 - CursorNotNone</h2>
+<ul>
+<li>added raising CursorNotNone exception if cursor is none when trying to execute database operations</li>
+</ul>
+<h2 id="070-support-tracker-select-command-enhancement">0.7.0 - Support tracker, select command enhancement, ...</h2>
+<ul>
+<li>included version, author and license information to the main __init__.py</li>
+<li>added support tracker to prevent db systems to execute unsupported operations from base db system</li>
+<li>enhanced select_from generator with select_count, select_avg and select_sum</li>
+<li>added 'DISTINCT' option to select operations</li>
+<li>remade and improved exceptions</li>
+</ul>
+<h5 id="breaking-changes">Breaking changes</h5>
+<ul>
+<li>made a variety of parameters keyword-only wich concerns the modules sqlGeneration and dbSystems</li>
+<li>moved sqlGeneration.py to sqlGeneration/standard: only db systems and sqlGeneration are concerned</li>
+</ul>
+<h2 id="060-sqlite-support">0.6.0 - Sqlite support</h2>
+<ul>
+<li>added further metadata to setup.py</li>
+<li>created MANIFEST.in</li>
+<li>sqlite is now supported:<ul>
+<li>added base db system all other db systems inherit from</li>
+</ul>
+</li>
+</ul>
+<h2 id="050-custom-data-types">0.5.0 - Custom data types</h2>
+<ul>
+<li>introduced custom data types</li>
+<li>annotated functions to give type hints</li>
+</ul>
+<h2 id="042">0.4.2</h2>
+<ul>
+<li>added naming constraits of a foreign key</li>
+</ul>
+<h2 id="041">0.4.1</h2>
+<ul>
+<li>replaced pytest.raises with assertRaises from unittest</li>
+<li>fixed primary key bug that generated invalid SQL</li>
+</ul>
+<h2 id="040">0.4.0</h2>
+<ul>
+<li>converted test-cases into 'unittest.TestCase's</li>
+<li>added primary and foreign key constraits</li>
+<li>added unique contrait</li>
+<li>custom exceptions got a hierarchy</li>
+</ul>
+<h2 id="032">0.3.2</h2>
+<ul>
+<li>added importing sub-modules recursivly in all __init__.py files</li>
+</ul>
+<h2 id="030">0.3.0</h2>
+<ul>
+<li>added MySql db system with connect_to_dn(), close_connection(), get_cursor()</li>
+<li>MySQL db system got functions to process db actions</li>
+<li>renamed test files to order their execution</li>
+<li>create_table() got the option to use "IF NOT EXISTS"</li>
+<li>no longer directly inserting values into SQL statements -&gt; added parameter for defining a placeholder (default: '?')</li>
+<li>introduced SQL generator select</li>
+<li>new requirement: mysql-connector-python</li>
+</ul>
+<h2 id="022">0.2.2</h2>
+<ul>
+<li>introduced the following SQL generators:<ul>
+<li>drop_table</li>
+<li>drop_db</li>
+</ul>
+</li>
+</ul>
+<h2 id="021">0.2.1</h2>
+<ul>
+<li>minimum python version set to 3.8 or newer</li>
+</ul>
+<h2 id="020">0.2.0</h2>
+<ul>
+<li>added setup.py</li>
+<li>introduced the following SQL generators:<ul>
+<li>insert_into</li>
+<li>delete_from</li>
+<li>create_table</li>
+<li>update</li>
+</ul>
+</li>
+<li>added sqlGeneration.check_validName() wich checks whether a string is a valid name for a database table</li>
+</ul></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
