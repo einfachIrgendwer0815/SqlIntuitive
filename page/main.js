@@ -1,5 +1,5 @@
 setTimeout(() => {
-  var elements = document.getElementsByTagName("section");
+  var elements = document.getElementsByClassName("afterOpen");
   console.log(elements);
 
   for(var i = 0; i < elements.length; i++) {
@@ -7,3 +7,11 @@ setTimeout(() => {
   }
 
 }, 1200);
+/*
+var features = document.getElementById("features");
+  document.onscroll = () => {
+    if(document.documentElement.scrollTop > (features.offsetHeight - features.scrollHeight / 3)) {
+      console.log("abc");
+    }
+}
+*/
