@@ -92,3 +92,62 @@ section:not(.visible) {
     clip-path: polygon(0% 0%, 110% 0%, 100% 100%, -10% 100%);
   }
 }
+
+#noscript {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#noscript > span {
+  position: absolute;
+
+  z-index: 100;
+
+  box-shadow: 0px 0px 10px red,
+              inset 0px 0px 4px rgba(0, 0, 0, 0.5);
+  top: 40%;
+  left: 0%;
+
+  width: 100%;
+  height: 3em;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: darkred;
+  /*background: linear-gradient(135deg, #bb0 2.5%, #000 2.5%, #000 5%, #bb0 5%, #bb0 7.5%, #000 7.5%, #000 10%, #bb0 10%, #bb0 12.5%, #000 12.5%, #000 15%, #bb0 15%, #bb0 17.5%, #000 17.5%, #000 20%, #bb0 20%, #bb0 22.5%, #000 22.5%, #000 25%, #bb0 25%, #bb0 27.5%, #000 27.5%, #000 30%, #bb0 30%, #bb0 32.5%, #000 32.5%, #000 35%, #bb0 35%, #bb0 37.5%, #000 37.5%, #000 40%, #bb0 40%, #bb0 42.5%, #000 42.5%, #000 45%, #bb0 45%, #bb0 47.5%, #000 47.5%, #000 50%, #bb0 50%, #bb0 52.5%, #000 52.5%, #000 55%, #bb0 55%, #bb0 57.5%, #000 57.5%, #000 60%, #bb0 60%, #bb0 62.5%, #000 62.5%, #000 65%, #bb0 65%, #bb0 67.5%, #000 67.5%, #000 70%, #bb0 70%, #bb0 72.5%, #000 72.5%, #000 75%, #bb0 75%, #bb0 77.5%, #000 77.5%, #000 80%);*/
+
+  border-top: 3px solid red;
+  border-bottom: 3px solid red;
+
+  font-family: 'Fredoka';
+  font-size: 1.3em;
+
+  color: white;
+
+  text-transform: uppercase full-width;
+  letter-spacing: .5em;
+
+  animation: 1s popup 1.2s both;
+
+  user-select: none;
+}
+
+@keyframes popup {
+  from {
+    transform: translateY(-20%);
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
