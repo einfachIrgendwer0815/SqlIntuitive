@@ -35,6 +35,8 @@ header {
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+
+  z-index: 10;
 }
 
 header ul {
@@ -154,5 +156,31 @@ footer:not(.visible) {
   user-select: none;
 }
 
+#home {
+  position: relative;
+}
 
+#home h1 {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  margin: 0;
+  padding: 0;
+
+  font-family: 'Fredoka';
+  font-size: 5.5em;
+  font-weight: 400;
+
+  color: white;
+
+  letter-spacing: 0.1em;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  animation: 1s headlineSlideIn 0.1s both;
 }
