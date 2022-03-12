@@ -13,10 +13,10 @@ class Count_avg_sum_modes(Enum):
     SUM = auto()
 
 class Joins(Enum):
-    INNER_JOIN = auto()
-    LEFT_JOIN = auto()
-    RIGHT_JOIN = auto()
-    FULL_JOIN = auto()
+    INNER_JOIN = "INNER JOIN"
+    LEFT_JOIN = "LEFT OUTER JOIN"
+    RIGHT_JOIN = "RIGHT OUTER JOIN"
+    FULL_JOIN = "FULL OUTER JOIN"
 
 def check_validName(text: str) -> bool:
     for char in INVALID_CHARS:
@@ -134,7 +134,20 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
     return text, column_values_ordered
 
 def gen_select_join(joinType: Joins, leftTable: str, leftColumns: list, rightTable: str, rightColumns: list, leftSharedColumn: str, rightSharedColumn: str):
-    pass
+    if not isinstance(joinType, Joins):
+        raise exceptions.InvalidType(joinType, Joins)
+
+    text = f'SELECT '
+
+    full_columns_left = [ f'{leftTable}.{column}' for column in leftColumns]
+    full_columns_right = [ f'{rightTable}.{column}' for column in rightColumns]
+
+    text += ', '.join(full_columns_left + full_columns_right)
+
+    text += f' FROM {leftTable} {joinType.value} {rightTable} '
+    text += f'ON {leftTable}.{leftSharedColumn}={rightTable}.{rightSharedColumn};'
+
+    return text
 
 def gen_count(tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     return gen_count_avg_sum(mode=Count_avg_sum_modes.COUNT, tableName=tableName, column=column, conditions=conditions, distinct=distinct, combinations=combinations, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=placeholder)
