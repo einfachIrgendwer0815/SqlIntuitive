@@ -386,3 +386,31 @@ class TestSqlGenerationStandard(unittest.TestCase):
 
         with self.assertRaises(exceptions.InvalidTableNameException):
             standard.gen_alter_table_modify("", "col1", "int")
+
+    def test_B_C_a_joins(self):
+        standard.Joins.INNER_JOIN
+        standard.Joins.LEFT_JOIN
+        standard.Joins.RIGHT_JOIN
+        standard.Joins.FULL_JOIN
+
+    def test_B_C_b_gen_select_join(self):
+        self.assertEqual(standard.gen_select_join(standard.Joins.INNER_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3, TableB.col1, TableB.col4 FROM TableA INNER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.LEFT_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3, TableB.col1, TableB.col4 FROM TableA LEFT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.RIGHT_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3, TableB.col1, TableB.col4 FROM TableA RIGHT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.FULL_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3, TableB.col1, TableB.col4 FROM TableA FULL OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+
+        self.assertEqual(standard.gen_select_join(standard.Joins.INNER_JOIN, 'TableA', [] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableB.col1, TableB.col4 FROM TableA INNER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.LEFT_JOIN, 'TableA', [] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableB.col1, TableB.col4 FROM TableA LEFT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.RIGHT_JOIN, 'TableA', [] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableB.col1, TableB.col4 FROM TableA RIGHT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.FULL_JOIN, 'TableA', [] , 'TableB', ['col1', 'col4'], 'col1', 'col1'), "SELECT TableB.col1, TableB.col4 FROM TableA FULL OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+
+        self.assertEqual(standard.gen_select_join(standard.Joins.INNER_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', [], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3 FROM TableA INNER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.LEFT_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', [], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3 FROM TableA LEFT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.RIGHT_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', [], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3 FROM TableA RIGHT OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+        self.assertEqual(standard.gen_select_join(standard.Joins.FULL_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', [], 'col1', 'col1'), "SELECT TableA.col1, TableA.col2, TableA.col3 FROM TableA FULL OUTER JOIN TableB ON TableA.col1=TableB.col1;")
+
+    def test_B_C_c_gen_select_join(self):
+        with self.assertRaises(exceptions.InvalidType):
+            standard.gen_select_join("INNER JOIN", 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1')
+
+        standard.gen_select_join(standard.Joins.INNER_JOIN, 'TableA', ['col1', 'col2', 'col3'] , 'TableB', ['col1', 'col4'], 'col1', 'col1')
