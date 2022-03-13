@@ -45,9 +45,6 @@
   from {
     color: transparent;
   }
-  to {
-    color: inherit;
-  }
 }
 
 @keyframes homeTextBefore {

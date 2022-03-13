@@ -200,10 +200,12 @@ footer:not(.visible) {
   margin-bottom: 0.1em;
 
   animation: homeTextP 0s;
-  animation-fill-mode: both;
+  animation-fill-mode: backwards;
   animation-delay: calc(1.9s + var(--item-delay, 0s));
 
   text-align: center;
+
+  color: #ff4;
 }
 
 #homeText > p::before {
