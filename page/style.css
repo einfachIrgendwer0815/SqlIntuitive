@@ -1,0 +1,227 @@
+:root {
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+
+  /*--script-note-background: darkred;
+  --script-note-border: red;
+  --script-note-shadow: red;*/
+
+  --script-note-background: #600;
+  --script-note-border: #a00;
+  --script-note-shadow: #500;
+
+  /*--background-gradient: linear-gradient(-25deg, #1913b7, #e83232);*/
+
+  --background-gradient: linear-gradient(-25deg, #151099, #bd2727);
+}
+
+body {
+  width: 100%;
+
+  margin: 0;
+  padding: 0;
+
+  font-family: 'Fredoka';
+}
+
+header {
+  width: 100%;
+  height: 3em;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  z-index: 10;
+}
+
+header ul {
+  height: 100%;
+
+  margin: 0;
+  margin-right: 10%;
+
+  padding: 0;
+
+  list-style: none;
+
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: row;
+
+  font-weight: 500;
+  font-size: 1.2em;
+}
+
+header ul:not(.display) {
+  display: none;
+}
+
+header ul li {
+  margin-right: 30%;
+
+  transition: padding-top 200ms ease-in-out;
+
+  animation: 1s headerListItems both;
+  animation-delay: calc(.4s + var(--item-delay, 0s));
+}
+
+header ul li:hover {
+  padding-top: 5%;
+}
+
+header ul li:last-child {
+  margin-right: 0;
+}
+
+header ul li a {
+  all: unset;
+}
+
+section {
+  width: 100%;
+  min-height: 100vh;
+
+  display: inline-block;
+}
+
+section:not(.display),
+footer:not(.display) {
+  display: none;
+}
+
+#background {
+  position: fixed;
+  width: 100%;
+  min-height: 100vh;
+
+  background: var(--background-gradient);
+
+  animation: openBackground 1s both linear;
+  animation-delay: 0.2s;
+
+  z-index: -1;
+}
+
+#noscript {
+  width: 100%;
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#noscript > span {
+  position: absolute;
+
+  z-index: 100;
+
+  box-shadow: 0px 0px 10px var(--script-note-shadow),
+              inset 0px 0px 4px rgba(0, 0, 0, 0.5);
+  top: 40%;
+  left: 0%;
+
+  width: 100%;
+  height: 3em;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--script-note-background);
+  /*background: linear-gradient(135deg, #bb0 2.5%, #000 2.5%, #000 5%, #bb0 5%, #bb0 7.5%, #000 7.5%, #000 10%, #bb0 10%, #bb0 12.5%, #000 12.5%, #000 15%, #bb0 15%, #bb0 17.5%, #000 17.5%, #000 20%, #bb0 20%, #bb0 22.5%, #000 22.5%, #000 25%, #bb0 25%, #bb0 27.5%, #000 27.5%, #000 30%, #bb0 30%, #bb0 32.5%, #000 32.5%, #000 35%, #bb0 35%, #bb0 37.5%, #000 37.5%, #000 40%, #bb0 40%, #bb0 42.5%, #000 42.5%, #000 45%, #bb0 45%, #bb0 47.5%, #000 47.5%, #000 50%, #bb0 50%, #bb0 52.5%, #000 52.5%, #000 55%, #bb0 55%, #bb0 57.5%, #000 57.5%, #000 60%, #bb0 60%, #bb0 62.5%, #000 62.5%, #000 65%, #bb0 65%, #bb0 67.5%, #000 67.5%, #000 70%, #bb0 70%, #bb0 72.5%, #000 72.5%, #000 75%, #bb0 75%, #bb0 77.5%, #000 77.5%, #000 80%);*/
+
+  border-top: 3px solid var(--script-note-border);
+  border-bottom: 3px solid var(--script-note-border);
+
+  font-size: 1.3em;
+
+  color: white;
+
+  text-transform: uppercase full-width;
+  letter-spacing: .5em;
+
+  animation: 1s noscriptPopup 1.4s both;
+
+  user-select: none;
+}
+
+#home {
+  position: relative;
+}
+
+#home h1 {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  margin: 0;
+  padding: 0;
+
+  font-size: 5.5em;
+  font-weight: 400;
+
+  color: white;
+
+  letter-spacing: 0.1em;
+
+  overflow: hidden;
+
+  text-align: center;
+
+  animation: 1s headlineSlideIn 0.1s both;
+}
+
+#homeText {
+  position: absolute;
+  bottom: 45%;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: 1.2em;
+}
+
+#homeText > p {
+  position: relative;
+
+  margin-top: 0;
+
+  margin-bottom: 0.1em;
+
+  animation: homeTextP 0s;
+  animation-fill-mode: backwards;
+  animation-delay: calc(1.9s + var(--item-delay, 0s));
+
+  text-align: center;
+
+  color: #ff4;
+}
+
+#homeText > p::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+
+  background-color: #dd5d00;
+
+  animation: homeTextBefore 1s;
+  animation-delay: calc(1.4s + var(--item-delay, 0s));
+  animation-fill-mode: both;
+  animation-timing-function: ease-in-out;
+}
+
+#homeText > p:last-child {
+  margin-bottom: 0;
+}
