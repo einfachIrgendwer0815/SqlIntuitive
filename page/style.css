@@ -58,7 +58,7 @@ header ul {
   font-size: 1.2em;
 }
 
-header ul:not(.visible) {
+header ul:not(.display) {
   display: none;
 }
 
@@ -90,8 +90,8 @@ section {
   display: inline-block;
 }
 
-section:not(.visible),
-footer:not(.visible) {
+section:not(.display),
+footer:not(.display) {
   display: none;
 }
 
