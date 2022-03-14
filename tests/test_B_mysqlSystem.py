@@ -1,6 +1,7 @@
 from sqlIntuitive import dbSystems
 from sqlIntuitive.ext import customDataTypes
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
+from sqlIntuitive.sqlGeneration.standard import Joins
 
 from sqlIntuitive import exceptions
 
@@ -35,6 +36,8 @@ class TestMysqlSystem(unittest.TestCase):
 
             cursor.execute("CREATE TABLE IF NOT EXISTS TableB (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint, col4 int);")
             cursor.execute("CREATE TABLE IF NOT EXISTS TableC (col1 varchar(200), col2 int PRIMARY KEY, col3 tinyint, col4 int);")
+            cursor.execute("CREATE TABLE IF NOT EXISTS JoinTableA (col1 int, col2 varchar(10));")
+            cursor.execute("CREATE TABLE IF NOT EXISTS JoinTableB (colA int, colB int, colC bool, colD varchar(10));")
         else:
             raise Exception()
 
@@ -54,15 +57,17 @@ class TestMysqlSystem(unittest.TestCase):
             self.mydb.dbCon.close()
 
         self.setUp()
-        self.clearTableB()
+        self.clearTables()
         self.mydb.dbCon.close()
 
-    def clearTableB(self):
+    def clearTables(self):
         self.mydb.connect_to_db()
         cursor = self.mydb.dbCon.cursor()
 
         cursor.execute("DELETE FROM TableB;")
         cursor.execute("DELETE FROM TableC;")
+        cursor.execute("DELETE FROM JoinTableA;")
+        cursor.execute("DELETE FROM JoinTableB;")
         self.mydb.dbCon.commit()
 
     @classmethod
@@ -349,3 +354,46 @@ class TestMysqlSystem(unittest.TestCase):
         self.mydb.create_cursor()
 
         self.mydb.alter_table_modify("TableC", "col4", "varchar(10)")
+
+    def test_T_select_join(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        self.mydb.cursor.execute("INSERT INTO JoinTableA (col1, col2) VALUES (1,'A'),(2,'ABC'),(4, 'random'),(5,'qwertz');")
+        self.mydb.cursor.execute("INSERT INTO JoinTableB (colA, colB, colC, colD) VALUES (1,123, 1, 'mno'),(2,987, 0, 'modnar'),(3, 634125, 0, 'xyz'),(4, 456, 1, 'DEF');")
+
+        self.assertEqual(
+            self.mydb.select_join(Joins.INNER_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA'),
+            [
+                (1, 'A', 123, True, 'mno'),
+                (2, 'ABC', 987, False, 'modnar'),
+                (4, 'random', 456, True, 'DEF')
+            ]
+        )
+
+        self.assertEqual(
+            self.mydb.select_join(Joins.LEFT_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA'),
+            [
+                (1, 'A', 123, True, 'mno'),
+                (2, 'ABC', 987, False, 'modnar'),
+                (4, 'random', 456, True, 'DEF'),
+                (5, 'qwertz', None, None, None)
+            ]
+        )
+
+        self.assertEqual(
+            self.mydb.select_join(Joins.RIGHT_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA'),
+            [
+                (1, 'A', 123, True, 'mno'),
+                (2, 'ABC', 987, False, 'modnar'),
+                (None, None, 634125, False, 'xyz'),
+                (4, 'random', 456, True, 'DEF')
+            ]
+        )
+
+    def test_U_select_join(self):
+        self.mydb.connect_to_db()
+        self.mydb.create_cursor()
+
+        with self.assertRaises(exceptions.NotSupported):
+            self.mydb.select_join(Joins.FULL_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA')
