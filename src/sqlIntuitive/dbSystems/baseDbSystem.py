@@ -1,8 +1,9 @@
 from sqlIntuitive import sqlGeneration
+from sqlIntuitive.sqlGeneration.standard import Joins
 from sqlIntuitive.ext.customDataTypes import AdaptionProvider, CustomDataType
 from sqlIntuitive.conditionEnums import ComparisonTypes, CombinationTypes
 from sqlIntuitive.dbSystems.supportTracker import ifSupported, Features, isSupported
-from sqlIntuitive.exceptions import CursorIsNone
+from sqlIntuitive.exceptions import CursorIsNone, NotSupported
 
 from typing import types, Union
 
@@ -135,6 +136,19 @@ class BaseDbSystem():
             res[index] = self.adaptProvider.convertTupleToClsInstance(res[index])
 
         return res
+
+    @cursorNotNone
+    def select_join(self, joinType: Joins, leftTable: str, leftColumns: list, rightTable: str, rightColumns: list, leftSharedColumn: str, rightSharedColumn: str) -> list:
+        joinTypeToFeature = {Joins.INNER_JOIN: Features.SQL_SELECT_INNER_JOIN, Joins.LEFT_JOIN: Features.SQL_SELECT_LEFT_OUTER_JOIN, Joins.RIGHT_JOIN: Features.SQL_SELECT_RIGHT_OUTER_JOIN, Joins.FULL_JOIN: Features.SQL_SELECT_FULL_OUTER_JOIN}
+
+        if not isSupported(joinTypeToFeature[joinType], self.__class__.SUPPORTS):
+            raise NotSupported(joinType, self.__class__.__name__)
+
+        sql = sqlGeneration.standard.gen_select_join(joinType, leftTable, leftColumns, rightTable, rightColumns, leftSharedColumn, rightSharedColumn)
+
+        self.cursor.execute(sql)
+
+        return self.cursor.fetchall()
 
     @ifSupported(Features.SQL_COUNT_AVG_SUM)
     def select_count(self, tableName: str, column: str = "", conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> int:

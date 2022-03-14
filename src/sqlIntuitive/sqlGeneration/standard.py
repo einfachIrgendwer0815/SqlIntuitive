@@ -133,7 +133,7 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
 
     return text, column_values_ordered
 
-def gen_select_join(joinType: Joins, leftTable: str, leftColumns: list, rightTable: str, rightColumns: list, leftSharedColumn: str, rightSharedColumn: str):
+def gen_select_join(joinType: Joins, leftTable: str, leftColumns: list, rightTable: str, rightColumns: list, leftSharedColumn: str, rightSharedColumn: str) -> str:
     if not isinstance(joinType, Joins):
         raise exceptions.InvalidType(joinType, Joins)
 
