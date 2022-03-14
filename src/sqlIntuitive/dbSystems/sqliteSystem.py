@@ -17,6 +17,8 @@ class SqliteDbSystem(BaseDbSystem):
         Features.SQL_UPDATE,
         Features.SQL_DELETE_FROM,
         Features.SQL_SELECT_FROM,
+        Features.SQL_SELECT_INNER_JOIN,
+        Features.SQL_SELECT_LEFT_OUTER_JOIN,
         Features.SQL_COUNT_AVG_SUM,
         Features.SQL_PRIMARY_KEYS,
         Features.SQL_FOREIGN_KEYS,

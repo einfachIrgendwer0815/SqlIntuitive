@@ -1,5 +1,6 @@
 from sqlIntuitive import dbSystems
 from sqlIntuitive.ext import customDataTypes
+from sqlIntuitive.sqlGeneration.standard import Joins
 
 from sqlIntuitive import exceptions
 
@@ -298,3 +299,40 @@ class TestSqliteSystem(unittest.TestCase):
         self.memory_db.cursor.execute("CREATE TABLE TableB (col1 int);")
 
         self.memory_db.alter_table_rename_column("TableB", "col1", "colA")
+
+    def test_V_select_join(self):
+        self.memory_db.create_cursor()
+
+        self.memory_db.cursor.execute("CREATE TABLE IF NOT EXISTS JoinTableA (col1 int, col2 varchar(10));")
+        self.memory_db.cursor.execute("CREATE TABLE IF NOT EXISTS JoinTableB (colA int, colB int, colC bool, colD varchar(10));")
+
+        self.memory_db.cursor.execute("INSERT INTO JoinTableA (col1, col2) VALUES (1,'A'),(2,'ABC'),(4, 'random'),(5,'qwertz');")
+        self.memory_db.cursor.execute("INSERT INTO JoinTableB (colA, colB, colC, colD) VALUES (1,123, 1, 'mno'),(2,987, 0, 'modnar'),(3, 634125, 0, 'xyz'),(4, 456, 1, 'DEF');")
+
+        self.assertEqual(
+            self.memory_db.select_join(Joins.INNER_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA'),
+            [
+                (1, 'A', 123, True, 'mno'),
+                (2, 'ABC', 987, False, 'modnar'),
+                (4, 'random', 456, True, 'DEF')
+            ]
+        )
+
+        self.assertEqual(
+            self.memory_db.select_join(Joins.LEFT_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA'),
+            [
+                (1, 'A', 123, True, 'mno'),
+                (2, 'ABC', 987, False, 'modnar'),
+                (4, 'random', 456, True, 'DEF'),
+                (5, 'qwertz', None, None, None)
+            ]
+        )
+
+    def test_W_select_join(self):
+        self.memory_db.create_cursor()
+
+        with self.assertRaises(exceptions.NotSupported):
+            self.memory_db.select_join(Joins.RIGHT_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA')
+
+        with self.assertRaises(exceptions.NotSupported):
+            self.memory_db.select_join(Joins.FULL_JOIN, 'JoinTableA', ['col1', 'col2'], 'JoinTableB', ['colB', 'colC', 'colD'], 'col1', 'colA')
