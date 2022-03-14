@@ -4,6 +4,12 @@ A full list of all changes ordered by the version they were made in.
 
 ---
 
+## 0.9.0 - Join
+
+- added sql generators for INNER, LEFT, RIGHT and FULL JOIN
+- added 'select ... join' command
+
+
 ## 0.8.0 - Alter table commands
 
 - added enums of available sql generation functions per dbSystem
