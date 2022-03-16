@@ -9,6 +9,7 @@ class Standard(NameAsValue):
     SELECT_COUNT = auto()
     SELECT_AVG = auto()
     SELECT_SUM = auto()
+    SELECT_JOIN = auto()
     INSERT_INTO = auto()
     UPDATE = auto()
     DELETE_FROM = auto()
