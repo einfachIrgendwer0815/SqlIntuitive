@@ -101,7 +101,7 @@ def gen_conditions(conditions: dict = {}, combinations: list = [], *, defaultCom
 
     return text, values_ordered
 
-def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
+def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combinations: list = [], *, orderBy: str = None, orderDESC: bool = False, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO, placeholder: str = '?') -> tuple:
     if check_validName(tableName) == False:
         raise exceptions.InvalidTableNameException()
 
@@ -128,6 +128,10 @@ def gen_select(tableName: str, columns: list = [], conditions: dict = {}, combin
 
         text += conditionText
         column_values_ordered += conditionValues
+
+    if orderBy != None:
+        text += f' ORDER BY {orderBy} '
+        text += 'DESC' if orderDESC else 'ASC'
 
     text += ';'
 
