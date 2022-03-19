@@ -284,12 +284,18 @@ class TestSqlGenerationStandard(unittest.TestCase):
 
         self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=?;', ['hello']))
 
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy="xyz"), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz ASC;', ['hello', 'abc']))
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy="xyz", orderDESC=True), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz DESC;', ['hello', 'abc']))
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy="xyz", distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz ASC;', ['hello']))
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy="xyz", orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz DESC;', ['hello']))
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy="xyz", distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz ASC;', ['hello']))
-        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy="xyz", orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz DESC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy=["xyz"]), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz ASC;', ['hello', 'abc']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy=["xyz", "abc"]), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz, abc ASC;', ['hello', 'abc']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy=["xyz"], orderDESC=True), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz DESC;', ['hello', 'abc']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello", "xyz": "abc"}, orderBy=["xyz", "abc"], orderDESC=True), ('SELECT abc, def FROM TableS WHERE col5=? AND xyz=? ORDER BY xyz, abc DESC;', ['hello', 'abc']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz"], distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz ASC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz", "abc"], distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz, abc ASC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz"], orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz DESC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz", "abc"], orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz, abc DESC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz"], distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz ASC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz", "abc"], distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz, abc ASC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz"], orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz DESC;', ['hello']))
+        self.assertEqual(standard.gen_select("TableS", ["abc", "def"], conditions={"col5":"hello"}, orderBy=["xyz", "abc"], orderDESC=True, distinct=True), ('SELECT DISTINCT abc, def FROM TableS WHERE col5=? ORDER BY xyz, abc DESC;', ['hello']))
 
     def test_A_T_gen_select(self):
         with self.assertRaises(exceptions.InvalidTableNameException):
