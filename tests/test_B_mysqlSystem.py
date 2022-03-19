@@ -149,7 +149,7 @@ class TestMysqlSystem(unittest.TestCase):
         self.mydb.update("TableB", {"col3": False, "col2": 43}, {"col2": 42})
         self.mydb.update("TableB", {"col3": False, "col2": 44}, {"col2": {'value': 43, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
 
-    def test_H_select_from(self):
+    def test_H_a_select_from(self):
         self.assertTrue(self.mydb.connect_to_db())
         self.mydb.create_cursor()
         self.assertIsNotNone(self.mydb.cursor)
@@ -162,6 +162,19 @@ class TestMysqlSystem(unittest.TestCase):
 
         res = self.mydb.select_from("TableB", ['col1'], conditions={'col2': {'value':50, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}}, distinct=True)
         self.assertEqual(len(res), 2)
+
+    def test_H_b_select_from(self):
+        self.assertTrue(self.mydb.connect_to_db())
+        self.mydb.create_cursor()
+        self.assertIsNotNone(self.mydb.cursor)
+
+        self.mydb.cursor.execute("INSERT INTO TableB (col1,col2) VALUES ('A',10),('B',20),('A',30),('C',40);")
+
+        res = self.mydb.select_from("TableB", ['col1'], orderBy=['col2'])
+        self.assertEqual(res, [('A',), ('B',), ('A',), ('C',)])
+
+        res = self.mydb.select_from("TableB", ['col1'], orderBy=['col2'], orderDESC=True)
+        self.assertEqual(res, [('C',), ('A',), ('B',), ('A',)])
 
     def test_I_delete(self):
         self.assertTrue(self.mydb.connect_to_db())

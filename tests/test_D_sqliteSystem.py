@@ -101,7 +101,7 @@ class TestSqliteSystem(unittest.TestCase):
         self.file_db.update("TableA", {"col3": False, "col2": 43}, {"col2": 42})
         self.file_db.update("TableA", {"col3": False, "col2": 44}, {"col2": {'value': 43, 'comparison': ComparisonTypes.LESS_THAN_OR_EQUAL_TO}})
 
-    def test_I_select_from(self):
+    def test_I_a_select_from(self):
         self.memory_db.create_cursor()
 
         self.memory_db.create_table("TableA", {'col1': 'string', 'col2': 'int'})
@@ -118,6 +118,20 @@ class TestSqliteSystem(unittest.TestCase):
 
         res = self.memory_db.select_from("TableA", ['col2'], distinct=True)
         self.assertEqual(res, [(123,),(456,),(789,)])
+
+    def test_I_b_select_from(self):
+        self.memory_db.connect_to_db()
+        self.memory_db.create_cursor()
+        self.assertIsNotNone(self.memory_db.cursor)
+
+        self.memory_db.cursor.execute("CREATE TABLE TableB (col1 str, col2 int);")
+        self.memory_db.cursor.execute("INSERT INTO TableB (col1,col2) VALUES ('A',10),('B',20),('A',30),('C',40);")
+
+        res = self.memory_db.select_from("TableB", ['col1'], orderBy=['col2'])
+        self.assertEqual(res, [('A',), ('B',), ('A',), ('C',)])
+
+        res = self.memory_db.select_from("TableB", ['col1'], orderBy=['col2'], orderDESC=True)
+        self.assertEqual(res, [('C',), ('A',), ('B',), ('A',)])
 
     def test_J_delete(self):
         self.file_db.create_cursor()

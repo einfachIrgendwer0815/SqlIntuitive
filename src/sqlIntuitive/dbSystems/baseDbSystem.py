@@ -123,10 +123,10 @@ class BaseDbSystem():
 
     @ifSupported(Features.SQL_SELECT_FROM)
     @cursorNotNone
-    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, *, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> list:
+    def select_from(self, tableName: str, columns: list = [], conditions: dict = {}, *, orderBy: list[str] = None, orderDESC: bool = False, distinct: bool = False, conditionCombining: CombinationTypes = CombinationTypes.AND, conditionComparison: ComparisonTypes = ComparisonTypes.EQUAL_TO) -> list:
         adaptedConditions = self.adaptProvider.convertDictToString(conditions)
 
-        sql, column_values_ordered = sqlGeneration.standard.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, distinct=distinct, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
+        sql, column_values_ordered = sqlGeneration.standard.gen_select(tableName=tableName, columns=columns, conditions=adaptedConditions, orderBy=orderBy, orderDESC=orderDESC, distinct=distinct, conditionCombining=conditionCombining, conditionComparison=conditionComparison, placeholder=self.placeholder)
 
         self.cursor.execute(sql, column_values_ordered)
 
