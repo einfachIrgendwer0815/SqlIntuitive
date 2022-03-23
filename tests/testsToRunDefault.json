@@ -6,5 +6,6 @@
   "customDataTypes": true,
   "sqliteSystem": true,
   "supportTracker": true,
-  "exceptions": true
+  "exceptions": true,
+  "procedures": true
 }
