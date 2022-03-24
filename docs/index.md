@@ -5,10 +5,10 @@ It offers a way to perform database transactions with no need to write any SQL s
 Another advantage is the ability to store any Python object you want to inside a database.
 Currently only MySQL and SqLite are supported, but more will come in the future and contributing is most welcome.
 <br><br>
-  - [Getting started](gettingStarted.md)
+  - [Getting started](docs/gettingStarted.md)
   <br>
-  - [User Guide](userGuide/overview.md)
+  - [User Guide](docs/userGuide/overview.md)
   <br>
-  - [Code Docs](codeDocs/overview.md)
+  - [Code Docs](docs/codeDocs/overview.md)
   <br>
-  - [Changelog](changelog.md)
+  - [Changelog](docs/changelog.md)
