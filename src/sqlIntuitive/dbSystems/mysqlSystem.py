@@ -11,6 +11,7 @@ from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupport
 
 class MySqlDbSystem(BaseDbSystem):
     placeholder: str = "%s"
+    SQL_GENERATION_FEATURE_LIST = sqlGeneration.functionEnums.MySQL
     SUPPORTS: int = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,

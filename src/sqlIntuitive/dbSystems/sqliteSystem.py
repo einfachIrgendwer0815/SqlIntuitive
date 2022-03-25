@@ -8,6 +8,7 @@ from sqlIntuitive.dbSystems.supportTracker import or_values, Features, ifSupport
 
 class SqliteDbSystem(BaseDbSystem):
     placeholder: str = "?"
+    SQL_GENERATION_FEATURE_LIST = sqlGeneration.functionEnums.SqLite
     SUPPORTS: int = or_values([
         Features.SQL_CREATE_TABLE,
         Features.SQL_DROP_TABLE,

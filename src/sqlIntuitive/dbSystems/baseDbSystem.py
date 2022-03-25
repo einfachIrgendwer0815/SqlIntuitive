@@ -18,6 +18,7 @@ def cursorNotNone(func: types.FunctionType) -> types.FunctionType:
 
 class BaseDbSystem():
     placeholder: str = "%s"
+    SQL_GENERATION_FEATURE_LIST = sqlGeneration.functionEnums.Standard
     SUPPORTS: int = Features.ALL.value
 
     def __init__(self, database: str, adaptionProvider: AdaptionProvider = None) -> None:
