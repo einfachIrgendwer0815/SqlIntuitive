@@ -19,10 +19,10 @@ class TestProcedures(unittest.TestCase):
     def test_A_empty_procedure(self):
         p = Procedure()
 
-        self.assertTrue(p.valid)
         self.assertEqual(len(p), 0)
-        self.assertEqual(p.needsSupport(), 0)
+        self.assertEqual(p.getFeaturesUsed(), 0)
 
+    @unittest.skip
     def test_B_constructor(self):
         p = Procedure([
             {
@@ -40,6 +40,5 @@ class TestProcedures(unittest.TestCase):
             }
         ])
 
-        self.assertTrue(p.valid)
         self.assertEqual(len(p), 2)
-        self.assertEqual(p.needsSupport(), or_values([Features.SQL_SELECT_FROM, Features.SQL_DELETE_FROM]))
+        self.assertEqual(p.getFeaturesUsed(), or_values([Features.SQL_SELECT_FROM, Features.SQL_DELETE_FROM]))
