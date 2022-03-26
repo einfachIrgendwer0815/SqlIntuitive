@@ -85,6 +85,8 @@ class TestMysqlSystem(unittest.TestCase):
 
         mydb.cursor.execute("DROP TABLE TableB;")
         mydb.cursor.execute("DROP TABLE TableC;")
+        mydb.cursor.execute("DROP TABLE JoinTableA;")
+        mydb.cursor.execute("DROP TABLE JoinTableB;")
 
         mydb.close_connection()
 
