@@ -39,3 +39,66 @@ class TestProcedures(unittest.TestCase):
         ])
 
         self.assertEqual(len(p), 2)
+
+    def test_C_append(self):
+        p = Procedure()
+
+        c1 = {
+            "operation": functionEnums.Standard.SELECT_FROM,
+            "args": [],
+            "kwargs": {
+                "tableName": "TableA",
+                "columns": ["col1", "col2"]
+            }
+        }
+        c2 = {
+            "operation": functionEnums.Standard.DELETE_FROM,
+            "args": ["tableA"],
+            "kwargs": {}
+        }
+        c3 = {
+            "operation": functionEnums.Standard.SELECT_COUNT,
+            "args": [],
+            "kwargs": {
+                "tableName": "TableA"
+            }
+        }
+
+        p.append(c1)
+        p.append(c2)
+        p.append(c3)
+
+        self.assertEqual(len(p), 3)
+        self.assertEqual(p.commands, [c1, c2, c3])
+
+    def test_D_insert(self):
+        p = Procedure()
+
+        c1 = {
+            "operation": functionEnums.Standard.SELECT_FROM,
+            "args": [],
+            "kwargs": {
+                "tableName": "TableA",
+                "columns": ["col1", "col2"]
+            }
+        }
+        c2 = {
+            "operation": functionEnums.Standard.DELETE_FROM,
+            "args": ["tableA"],
+            "kwargs": {}
+        }
+        c3 = {
+            "operation": functionEnums.Standard.SELECT_COUNT,
+            "args": [],
+            "kwargs": {
+                "tableName": "TableA"
+            }
+        }
+
+        p.append(c1)
+        p.append(c2)
+
+        p.insert(1, c3)
+
+        self.assertEqual(len(p), 3)
+        self.assertEqual(p.commands, [c1, c3, c2])

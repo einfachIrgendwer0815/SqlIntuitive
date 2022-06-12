@@ -15,10 +15,19 @@ class Procedure():
         self.commands = []
 
         for command in commands:
-            if self._check_command_validity(command):
-                self.commands.append(command)
-            else:
-                raise InvalidCommand(command)
+            self.append(command)
+
+    def append(self, command):
+        if self._check_command_validity(command):
+            self.commands.append(command)
+        else:
+            raise InvalidCommand(command)
+
+    def insert(self, pos, command):
+        if self._check_command_validity(command):
+            self.commands.insert(pos, command)
+        else:
+            raise InvalidCommand(command)
 
     def _check_command_validity(self, command):
         for key, value_type in Procedure.COMMAND_STRUCTURE.items():
