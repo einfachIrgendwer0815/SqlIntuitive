@@ -20,9 +20,7 @@ class TestProcedures(unittest.TestCase):
         p = Procedure()
 
         self.assertEqual(len(p), 0)
-        self.assertEqual(p.getFeaturesUsed(), 0)
 
-    @unittest.skip
     def test_B_constructor(self):
         p = Procedure([
             {
@@ -41,4 +39,3 @@ class TestProcedures(unittest.TestCase):
         ])
 
         self.assertEqual(len(p), 2)
-        self.assertEqual(p.getFeaturesUsed(), or_values([Features.SQL_SELECT_FROM, Features.SQL_DELETE_FROM]))

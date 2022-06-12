@@ -1,14 +1,31 @@
+from sqlIntuitive.sqlGeneration import functionEnums
+from sqlIntuitive.exceptions import InvalidCommand
+from typing import types
+
 class Procedure():
-    def __init__(self, commands: list = None):
+    COMMAND_STRUCTURE = {
+        "operation": types.FunctionType,
+        "args": list,
+        "kwargs": dict,
+    }
+
+    def __init__(self, commands: list = []):
         self._featuresUsed = 0
 
         self.commands = []
 
-    def _check_command_list_validity(self, command_list: list):
-        pass
+        for command in commands:
+            if self._check_command_validity(command):
+                self.commands.append(command)
+            else:
+                raise InvalidCommand(command)
 
-    def getFeaturesUsed(self):
-        return self._featuresUsed
+    def _check_command_validity(self, command):
+        for key, value_type in Procedure.COMMAND_STRUCTURE.items():
+            if key not in command.keys() or type(command[key]) != value_type:
+                return False
+
+        return True
 
     def __len__(self):
         return len(self.commands)
